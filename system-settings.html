@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+            .setting-card {
+                @apply bg-white rounded-lg shadow-sm p-6 transition-all-300 hover:shadow-md border border-gray-border hover:border-primary;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen font-sans text-text-dark">
+    <!-- 主容器 -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- 页面标题 -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <h2 class="text-xl font-semibold">系统设置</h2>
+        </div>
+        
+        <!-- 设置选项 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 用户管理 -->
+            <a href="user-management.html" class="setting-card">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i class="fa fa-users text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium">用户管理</h3>
+                </div>
+                <p class="text-gray-text">管理系统用户账号、权限和状态</p>
+            </a>
+            
+            <!-- 角色管理 -->
+            <a href="role-management.html" class="setting-card">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i class="fa fa-shield text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium">角色管理</h3>
+                </div>
+                <p class="text-gray-text">管理系统角色和权限配置</p>
+            </a>
+            
+            <!-- 日志管理 -->
+            <a href="log-management.html" class="setting-card">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i class="fa fa-history text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium">日志管理</h3>
+                </div>
+                <p class="text-gray-text">查看系统操作日志和访问记录</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

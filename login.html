@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen flex items-center justify-center font-sans text-text-dark p-4">
+    <!-- 登录卡片 -->
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md overflow-hidden">
+        <!-- 卡片头部 -->
+        <div class="bg-primary py-6 px-8">
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4">
+                    <span class="text-primary text-2xl font-bold">企</span>
+                </div>
+                <h2 class="text-2xl font-semibold text-white">企业图纸管理系统</h2>
+                <p class="text-white/80 text-sm mt-1">请登录您的账号</p>
+            </div>
+        </div>
+        
+        <!-- 卡片内容 -->
+        <div class="p-8">
+            <!-- 登录表单 -->
+            <form id="login-form" class="space-y-6">
+                <!-- 账号输入 -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-text mb-1">账号</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-text">
+                            <span>👤</span>
+                        </span>
+                        <input type="text" id="username" name="username" class="w-full pl-10 pr-3 py-2 border border-gray-border rounded-md input-focus" placeholder="请输入账号">
+                    </div>
+                </div>
+                
+                <!-- 密码输入 -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-text mb-1">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-text">
+                            <span>🔒</span>
+                        </span>
+                        <input type="password" id="password" name="password" class="w-full pl-10 pr-10 py-2 border border-gray-border rounded-md input-focus" placeholder="请输入密码">
+                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-text hover:text-primary transition-all-300">
+                            <span>👁️</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 记住密码和忘记密码 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-text">记住我</label>
+                    </div>
+                    <a href="#" class="text-sm text-primary hover:underline transition-all-300">忘记密码？</a>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <div>
+                    <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-md transition-all-300 flex items-center justify-center">
+                        <span class="mr-2">➤</span>
+                        <span>登录</span>
+                    </button>
+                </div>
+                
+                <!-- 登录提示 -->
+                <div id="login-message" class="hidden text-center py-2 rounded-md"></div>
+            </form>
+        </div>
+        
+        <!-- 卡片底部 -->
+        <div class="bg-light px-8 py-4 text-center text-sm text-gray-text border-t border-gray-border">
+            <p>© 2026 企业图纸管理系统 版权所有</p>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 密码显示/隐藏切换
+            const togglePasswordBtn = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+            });
+            
+            // 登录表单提交
+            const loginForm = document.getElementById('login-form');
+            const loginMessage = document.getElementById('login-message');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 模拟登录成功
+                showMessage('登录中...', 'info');
+                
+                // 模拟网络请求延迟
+                setTimeout(function() {
+                    // 登录成功，跳转到首页
+                    if (window.parent && window.parent.document.getElementById('content-frame')) {
+                        window.parent.document.getElementById('content-frame').src = 'home.html';
+                    } else {
+                        window.location.href = 'home.html';
+                    }
+                }, 1000);
+            });
+            
+            // 显示消息
+            function showMessage(message, type) {
+                loginMessage.textContent = message;
+                loginMessage.classList.remove('hidden', 'bg-danger/10', 'text-danger', 'bg-success/10', 'text-success', 'bg-warning/10', 'text-warning', 'bg-info/10', 'text-primary');
+                
+                switch (type) {
+                    case 'danger':
+                        loginMessage.classList.add('bg-danger/10', 'text-danger');
+                        break;
+                    case 'success':
+                        loginMessage.classList.add('bg-success/10', 'text-success');
+                        break;
+                    case 'warning':
+                        loginMessage.classList.add('bg-warning/10', 'text-warning');
+                        break;
+                    case 'info':
+                        loginMessage.classList.add('bg-info/10', 'text-primary');
+                        break;
+                }
+                
+                loginMessage.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

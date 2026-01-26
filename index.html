@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen font-sans text-text-dark">
+    <!-- 主容器 -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- 左侧导航栏 -->
+        <aside class="bg-white shadow-sm w-64 z-10 hidden md:block">
+            <!-- 系统标题 -->
+            <div class="px-4 py-4 border-b border-gray-border">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
+                        <span class="text-primary font-bold">企</span>
+                    </div>
+                    <h1 class="text-lg font-semibold text-primary">企业图纸管理系统</h1>
+                </div>
+            </div>
+            
+            <!-- 导航链接 -->
+            <nav class="py-4">
+                <a href="#" class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300" data-target="home.html">
+                    <span class="mr-3">🏠</span>首页
+                </a>
+                <a href="#" class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300" data-target="file-management.html">
+                    <span class="mr-3">📁</span>文件管理
+                </a>
+                <a href="#" class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300" data-target="drawing-management.html">
+                    <span class="mr-3">📄</span>图纸管理
+                </a>
+                <div class="nav-item">
+                    <div class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 cursor-pointer">
+                        <span class="mr-3">⚙️</span>系统设置
+                        <i class="fa fa-angle-down ml-auto text-gray-text"></i>
+                    </div>
+                    <div class="sub-nav">
+                        <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="user-management.html">
+                            <span class="mr-3">👥</span>用户管理
+                        </a>
+                        <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="role-management.html">
+                            <span class="mr-3">🛡️</span>角色管理
+                        </a>
+                        <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="log-management.html">
+                            <span class="mr-3">📋</span>日志管理
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            
+
+        </aside>
+        
+        <!-- 右侧内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="container mx-auto px-4 py-3 flex items-center justify-end">
+                    <!-- 移动端系统标题 -->
+                    <div class="flex items-center space-x-2 md:hidden mr-auto">
+                        <div class="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
+                            <span class="text-primary font-bold">企</span>
+                        </div>
+                        <h1 class="text-xl font-semibold text-primary">企业图纸管理系统</h1>
+                    </div>
+                    
+                    <!-- 移动端菜单按钮 -->
+                    <div class="md:hidden mr-4">
+                        <button id="mobile-menu-button" class="text-gray-text hover:text-primary transition-all-300">
+                            <span>☰</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 通知和用户信息 -->
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-text hover:text-primary transition-all-300">
+                            <span>🔔</span>
+                        </button>
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-3">
+                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=80&q=80" alt="用户头像" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <p class="font-medium">管理员</p>
+                                <p class="text-xs text-gray-text">系统管理员</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 移动端导航菜单 -->
+            <div class="md:hidden bg-white border-t border-gray-border">
+                <div class="flex justify-around py-2">
+                    <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="home.html">
+                        <span class="text-lg">🏠</span>
+                        <span class="text-xs mt-1">首页</span>
+                    </a>
+                    <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="file-management.html">
+                        <span class="text-lg">📁</span>
+                        <span class="text-xs mt-1">文件管理</span>
+                    </a>
+                    <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="drawing-management.html">
+                        <span class="text-lg">📄</span>
+                        <span class="text-xs mt-1">图纸管理</span>
+                    </a>
+                    <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="system-settings.html">
+                        <span class="text-lg">⚙️</span>
+                        <span class="text-xs mt-1">设置</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 主内容区 - iframe -->
+            <main class="flex-1 overflow-hidden">
+                <iframe id="content-frame" src="login.html" class="w-full h-full border-0"></iframe>
+            </main>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有导航链接
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentFrame = document.getElementById('content-frame');
+            
+            // 为导航链接添加点击事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取目标页面
+                    const target = this.getAttribute('data-target');
+                    if (target) {
+                        // 更新iframe src
+                        contentFrame.src = target;
+                        
+                        // 更新导航链接状态
+                        navLinks.forEach(navLink => {
+                            if (navLink.getAttribute('data-target') === target) {
+                                navLink.classList.add('text-primary', 'bg-primary/10');
+                                navLink.classList.remove('text-gray-text');
+                            } else {
+                                navLink.classList.remove('text-primary', 'bg-primary/10');
+                                navLink.classList.add('text-gray-text');
+                            }
+                        });
+                    }
+                });
+            });
+            
+
+        });
+    </script>
+</body>
+</html>

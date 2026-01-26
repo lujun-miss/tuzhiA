@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色管理 - 企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+        }
+    </style>
+    <style>
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen font-sans text-text-dark m-0 p-0 overflow-hidden">
+    <!-- 主容器 -->
+    <div class="w-screen h-screen flex flex-col">
+        <!-- 页面标题 -->
+        <div class="bg-white border-b border-gray-border p-4">
+            <h2 class="text-xl font-semibold">角色管理</h2>
+        </div>
+        
+        <!-- 主要内容区 -->
+        <div class="flex-1 overflow-hidden p-0">
+            <div class="h-full bg-white border-t border-gray-border flex flex-col p-4 overflow-y-auto">
+                <!-- 操作按钮 -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                    <div class="relative flex-1 mb-4 md:mb-0">
+                        <input type="text" placeholder="搜索角色" class="w-full pl-8 pr-4 py-2 border border-gray-border rounded-md focus:border-primary focus:outline-none">
+                        <i class="fa fa-search absolute left-3 top-3 text-gray-text"></i>
+                    </div>
+                    <div class="md:ml-4">
+                        <button class="w-full md:w-auto bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center justify-center transition-all-300">
+                            <i class="fa fa-plus mr-2"></i>
+                            <span>添加角色</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 角色列表 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b border-gray-border">
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">角色名称</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">描述</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">用户数</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4">管理员</td>
+                                    <td class="py-3 px-4">系统最高权限，负责系统配置、用户管理、角色管理等</td>
+                                    <td class="py-3 px-4">1</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4">设计师</td>
+                                    <td class="py-3 px-4">负责图纸设计和上传，可查看和管理自己上传的图纸</td>
+                                    <td class="py-3 px-4">2</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4">审核员</td>
+                                    <td class="py-3 px-4">负责图纸审核，可查看和审核所有图纸</td>
+                                    <td class="py-3 px-4">1</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4">普通员工</td>
+                                    <td class="py-3 px-4">仅可查看自己上传的图纸</td>
+                                    <td class="py-3 px-4">8</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="text-primary hover:text-primary/80 transition-all-300">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加角色模态框 -->
+    <div id="add-role-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <!-- 模态框标题 -->
+            <div class="bg-white border-b border-gray-border p-4 flex justify-between items-center">
+                <h3 class="text-lg font-semibold">添加角色</h3>
+                <button id="close-add-role-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 模态框内容 -->
+            <div class="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+                <!-- 角色基本信息 -->
+                <div class="mb-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">角色名称 <span class="text-danger">*</span></label>
+                        <input type="text" placeholder="请输入角色名称" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">权限字符 <span class="text-danger">*</span></label>
+                        <input type="text" placeholder="请输入权限字符" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">角色顺序 <span class="text-danger">*</span></label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" value="0" class="w-24 border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-up"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">状态</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="status" value="正常" checked class="w-4 h-4 text-primary focus:ring-primary border-gray-border">
+                                <span class="ml-2">正常</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="status" value="停用" class="w-4 h-4 text-primary focus:ring-primary border-gray-border">
+                                <span class="ml-2">停用</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 权限设置 -->
+                <div class="mb-6">
+                    <h4 class="font-medium mb-3">权限设置</h4>
+                    
+                    <!-- 权限选项卡 -->
+                    <div class="mb-6">
+                        <div class="flex border-b border-gray-border">
+                            <button id="menu-permission-tab" class="px-4 py-2 font-medium text-primary border-b-2 border-primary">菜单权限</button>
+                            <button id="folder-permission-tab" class="px-4 py-2 font-medium text-gray-text hover:text-primary">文件夹权限</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 菜单权限内容 -->
+                    <div id="menu-permission-content" class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h5 class="font-medium">菜单权限</h5>
+                            <div class="flex space-x-2">
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 ml-4">
+                            <!-- 首页 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                    <span class="ml-2">首页</span>
+                                </label>
+                            </div>
+                            
+                            <!-- 文件管理 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                    <span class="ml-2">文件管理</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">创建文件夹</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">修改文件夹</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 图纸管理 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                    <span class="ml-2">图纸管理</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">上传图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">审核图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">下载图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">详情查看</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        <span class="ml-2">删除图纸</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 系统设置 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                    <span class="ml-2">系统设置</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <!-- 用户管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                            <span class="ml-2">用户管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">添加用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">修改用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">删除用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">分配角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">配置文件夹权限</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- 角色管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                            <span class="ml-2">角色管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">添加角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">修改角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">删除角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">配置角色权限</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- 日志管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                            <span class="ml-2">日志管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">查看操作日志</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">查看登录日志</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded">
+                                                <span class="ml-2">导出日志</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 文件夹权限内容 -->
+                    <div id="folder-permission-content" class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h5 class="font-medium">文件夹权限</h5>
+                            <div class="flex space-x-2">
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 ml-4">
+                            <!-- 冶炼设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">冶炼设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 冶炼设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">高炉设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">转炉设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 轧制设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">轧制设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 轧制设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">热轧设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">冷轧设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 焦化设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">焦化设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 焦化设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">焦炉设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">化产设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 烧结设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">烧结设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 烧结设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">烧结机设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">冷却设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 辅助设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">辅助设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 辅助设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">水处理设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">电气设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 建筑图纸 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">建筑图纸</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 建筑图纸子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">厂房建筑</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">办公建筑</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 结构图纸 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">结构图纸</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 结构图纸子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">设备基础</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">钢结构</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 电气图纸 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">电气图纸</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 电气图纸子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">供配电系统</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">自动化控制系统</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked="false">
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模态框底部 -->
+            <div class="bg-white border-t border-gray-border p-4 flex justify-end space-x-2">
+                <button id="cancel-add-role" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button id="save-add-role" class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 修改角色模态框 -->
+    <div id="edit-role-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <!-- 模态框标题 -->
+            <div class="bg-white border-b border-gray-border p-4 flex justify-between items-center">
+                <h3 class="text-lg font-semibold">修改角色</h3>
+                <button id="close-edit-role-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 模态框内容 -->
+            <div class="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+                <!-- 角色基本信息 -->
+                <div class="mb-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">角色名称 <span class="text-danger">*</span></label>
+                        <input type="text" value="管理员" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">权限字符 <span class="text-danger">*</span></label>
+                        <input type="text" value="admin" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">角色顺序 <span class="text-danger">*</span></label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" value="1" class="w-24 border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-up"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-text mb-1">状态</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="edit-status" value="正常" checked class="w-4 h-4 text-primary focus:ring-primary border-gray-border">
+                                <span class="ml-2">正常</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="edit-status" value="停用" class="w-4 h-4 text-primary focus:ring-primary border-gray-border">
+                                <span class="ml-2">停用</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 权限设置 -->
+                <div class="mb-6">
+                    <h4 class="font-medium mb-3">权限设置</h4>
+                    
+                    <!-- 权限选项卡 -->
+                    <div class="mb-6">
+                        <div class="flex border-b border-gray-border">
+                            <button id="edit-menu-permission-tab" class="px-4 py-2 font-medium text-primary border-b-2 border-primary">菜单权限</button>
+                            <button id="edit-folder-permission-tab" class="px-4 py-2 font-medium text-gray-text hover:text-primary">文件夹权限</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 菜单权限内容 -->
+                    <div id="edit-menu-permission-content" class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h5 class="font-medium">菜单权限</h5>
+                            <div class="flex space-x-2">
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 ml-4">
+                            <!-- 首页 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">首页</span>
+                                </label>
+                            </div>
+                            
+                            <!-- 文件管理 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">文件管理</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">创建文件夹</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">修改文件夹</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 图纸管理 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">图纸管理</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">上传图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">审核图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">下载图纸</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">详情查看</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">删除图纸</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 系统设置 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">系统设置</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-2">
+                                    <!-- 用户管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">用户管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">添加用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">修改用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">删除用户</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">分配角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">配置文件夹权限</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- 角色管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">角色管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">添加角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">修改角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">删除角色</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">配置角色权限</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- 日志管理 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">日志管理</span>
+                                        </label>
+                                        <div class="ml-6 mt-2 space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">查看操作日志</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">查看登录日志</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-2">导出日志</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 文件夹权限内容 -->
+                    <div id="edit-folder-permission-content" class="mb-6 hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <h5 class="font-medium">文件夹权限</h5>
+                            <div class="flex space-x-2">
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                                <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 ml-4">
+                            <!-- 冶炼设备 -->
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">冶炼设备</span>
+                                </label>
+                                <div class="ml-6 mt-2 space-y-4">
+                                    <!-- 冶炼设备子文件夹 -->
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">高炉设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">转炉设备</span>
+                                        </label>
+                                        <div class="ml-6 mt-2">
+                                            <div class="flex flex-wrap gap-4">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">查看</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">上传</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">下载</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">删除</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">审核</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                    <span class="ml-1 text-sm">修改</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模态框底部 -->
+            <div class="bg-white border-t border-gray-border p-4 flex justify-end space-x-2">
+                <button id="cancel-edit-role" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button id="save-edit-role" class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 权限分配模态框 -->
+    <div id="permission-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <!-- 模态框标题 -->
+            <div class="bg-white border-b border-gray-border p-4 flex justify-between items-center">
+                <h3 class="text-lg font-semibold">角色权限设置</h3>
+                <button id="close-permission-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 模态框内容 -->
+            <div class="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+                <!-- 角色信息 -->
+                <div class="mb-6">
+                    <h4 class="font-medium mb-2">角色：<span id="modal-role-name">管理员</span></h4>
+                    <p class="text-sm text-gray-text">为该角色分配相应的菜单、按钮和文件夹访问权限</p>
+                </div>
+                
+                <!-- 权限选项卡 -->
+                <div class="mb-6">
+                    <div class="flex border-b border-gray-border">
+                        <button id="perm-menu-permission-tab" class="px-4 py-2 font-medium text-primary border-b-2 border-primary">菜单权限</button>
+                        <button id="perm-folder-permission-tab" class="px-4 py-2 font-medium text-gray-text hover:text-primary">文件夹权限</button>
+                    </div>
+                </div>
+                
+                <!-- 菜单权限内容 -->
+                <div id="perm-menu-permission-content" class="mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h5 class="font-medium">菜单权限</h5>
+                        <div class="flex space-x-2">
+                            <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                            <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 ml-4">
+                        <!-- 首页 -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                <span class="ml-2">首页</span>
+                            </label>
+                        </div>
+                        
+                        <!-- 文件管理 -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                <span class="ml-2">文件管理</span>
+                            </label>
+                            <div class="ml-6 mt-2 space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">创建文件夹</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">修改文件夹</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 图纸管理 -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                <span class="ml-2">图纸管理</span>
+                            </label>
+                            <div class="ml-6 mt-2 space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">上传图纸</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">审核图纸</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">下载图纸</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">详情查看</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                    <span class="ml-2">删除图纸</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 系统设置 -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                <span class="ml-2">系统设置</span>
+                            </label>
+                            <div class="ml-6 mt-2 space-y-2">
+                                <!-- 用户管理 -->
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">用户管理</span>
+                                    </label>
+                                    <div class="ml-6 mt-2 space-y-2">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">添加用户</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">修改用户</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">删除用户</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">分配角色</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">配置文件夹权限</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 角色管理 -->
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">角色管理</span>
+                                    </label>
+                                    <div class="ml-6 mt-2 space-y-2">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">添加角色</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">修改角色</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">删除角色</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">配置角色权限</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 日志管理 -->
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">日志管理</span>
+                                    </label>
+                                    <div class="ml-6 mt-2 space-y-2">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">查看操作日志</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">查看登录日志</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                            <span class="ml-2">导出日志</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 文件夹权限内容 -->
+                <div id="perm-folder-permission-content" class="mb-6 hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <h5 class="font-medium">文件夹权限</h5>
+                        <div class="flex space-x-2">
+                            <button class="text-sm text-gray-text hover:text-primary transition-all-300">展开/折叠</button>
+                            <button class="text-sm text-gray-text hover:text-primary transition-all-300">全选/全不选</button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 ml-4">
+                        <!-- 冶炼设备 -->
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                <span class="ml-2">冶炼设备</span>
+                            </label>
+                            <div class="ml-6 mt-2 space-y-4">
+                                <!-- 冶炼设备子文件夹 -->
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">高炉设备</span>
+                                    </label>
+                                    <div class="ml-6 mt-2">
+                                        <div class="flex flex-wrap gap-4">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">查看</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">上传</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">下载</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">删除</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">审核</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">修改</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                        <span class="ml-2">转炉设备</span>
+                                    </label>
+                                    <div class="ml-6 mt-2">
+                                        <div class="flex flex-wrap gap-4">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">查看</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">上传</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">下载</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">删除</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">审核</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded" checked>
+                                                <span class="ml-1 text-sm">修改</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模态框底部 -->
+            <div class="bg-white border-t border-gray-border p-4 flex justify-end space-x-2">
+                <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 模态框操作
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加角色按钮
+            const addRoleButton = document.querySelector('button:has(i.fa-plus)');
+            const addRoleModal = document.getElementById('add-role-modal');
+            const closeAddRoleModal = document.getElementById('close-add-role-modal');
+            const cancelAddRole = document.getElementById('cancel-add-role');
+            const saveAddRole = document.getElementById('save-add-role');
+            
+            // 修改角色按钮
+            const editRoleButtons = document.querySelectorAll('button:has(i.fa-edit)');
+            const editRoleModal = document.getElementById('edit-role-modal');
+            const closeEditRoleModal = document.getElementById('close-edit-role-modal');
+            const cancelEditRole = document.getElementById('cancel-edit-role');
+            const saveEditRole = document.getElementById('save-edit-role');
+            
+            // 权限设置按钮
+            const permissionButtons = document.querySelectorAll('button:has(i.fa-cog)');
+            const permissionModal = document.getElementById('permission-modal');
+            const closePermissionModal = document.getElementById('close-permission-modal');
+            
+            // 打开添加角色模态框
+            if (addRoleButton) {
+                addRoleButton.addEventListener('click', function() {
+                    addRoleModal.classList.remove('hidden');
+                });
+            }
+            
+            // 关闭添加角色模态框
+            if (closeAddRoleModal) {
+                closeAddRoleModal.addEventListener('click', function() {
+                    addRoleModal.classList.add('hidden');
+                });
+            }
+            
+            if (cancelAddRole) {
+                cancelAddRole.addEventListener('click', function() {
+                    addRoleModal.classList.add('hidden');
+                });
+            }
+            
+            // 保存角色
+            if (saveAddRole) {
+                saveAddRole.addEventListener('click', function() {
+                    // 这里可以添加表单验证和提交逻辑
+                    addRoleModal.classList.add('hidden');
+                    // 显示成功提示
+                    alert('角色添加成功！');
+                });
+            }
+            
+            // 打开修改角色模态框
+            editRoleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    editRoleModal.classList.remove('hidden');
+                });
+            });
+            
+            // 关闭修改角色模态框
+            if (closeEditRoleModal) {
+                closeEditRoleModal.addEventListener('click', function() {
+                    editRoleModal.classList.add('hidden');
+                });
+            }
+            
+            if (cancelEditRole) {
+                cancelEditRole.addEventListener('click', function() {
+                    editRoleModal.classList.add('hidden');
+                });
+            }
+            
+            // 保存修改角色
+            if (saveEditRole) {
+                saveEditRole.addEventListener('click', function() {
+                    // 这里可以添加表单验证和提交逻辑
+                    editRoleModal.classList.add('hidden');
+                    // 显示成功提示
+                    alert('角色修改成功！');
+                });
+            }
+            
+            // 打开权限设置模态框
+            permissionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    permissionModal.classList.remove('hidden');
+                });
+            });
+            
+            // 关闭权限设置模态框
+            if (closePermissionModal) {
+                closePermissionModal.addEventListener('click', function() {
+                    permissionModal.classList.add('hidden');
+                });
+            }
+            
+            // 选项卡切换
+            const menuPermissionTab = document.getElementById('menu-permission-tab');
+            const folderPermissionTab = document.getElementById('folder-permission-tab');
+            const menuPermissionContent = document.getElementById('menu-permission-content');
+            const folderPermissionContent = document.getElementById('folder-permission-content');
+            
+            if (menuPermissionTab && folderPermissionTab && menuPermissionContent && folderPermissionContent) {
+                menuPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    menuPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    menuPermissionTab.classList.remove('text-gray-text');
+                    folderPermissionTab.classList.add('text-gray-text');
+                    folderPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    menuPermissionContent.style.display = 'block';
+                    folderPermissionContent.style.display = 'none';
+                });
+                
+                folderPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    folderPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    folderPermissionTab.classList.remove('text-gray-text');
+                    menuPermissionTab.classList.add('text-gray-text');
+                    menuPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    folderPermissionContent.style.display = 'block';
+                    menuPermissionContent.style.display = 'none';
+                });
+            }
+            
+            // 修改角色选项卡切换
+            const editMenuPermissionTab = document.getElementById('edit-menu-permission-tab');
+            const editFolderPermissionTab = document.getElementById('edit-folder-permission-tab');
+            const editMenuPermissionContent = document.getElementById('edit-menu-permission-content');
+            const editFolderPermissionContent = document.getElementById('edit-folder-permission-content');
+            
+            if (editMenuPermissionTab && editFolderPermissionTab && editMenuPermissionContent && editFolderPermissionContent) {
+                editMenuPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    editMenuPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    editMenuPermissionTab.classList.remove('text-gray-text');
+                    editFolderPermissionTab.classList.add('text-gray-text');
+                    editFolderPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    editMenuPermissionContent.style.display = 'block';
+                    editFolderPermissionContent.style.display = 'none';
+                });
+                
+                editFolderPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    editFolderPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    editFolderPermissionTab.classList.remove('text-gray-text');
+                    editMenuPermissionTab.classList.add('text-gray-text');
+                    editMenuPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    editFolderPermissionContent.style.display = 'block';
+                    editMenuPermissionContent.style.display = 'none';
+                });
+            }
+            
+            // 权限分配模态框选项卡切换
+            const permMenuPermissionTab = document.getElementById('perm-menu-permission-tab');
+            const permFolderPermissionTab = document.getElementById('perm-folder-permission-tab');
+            const permMenuPermissionContent = document.getElementById('perm-menu-permission-content');
+            const permFolderPermissionContent = document.getElementById('perm-folder-permission-content');
+            
+            if (permMenuPermissionTab && permFolderPermissionTab && permMenuPermissionContent && permFolderPermissionContent) {
+                permMenuPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    permMenuPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    permMenuPermissionTab.classList.remove('text-gray-text');
+                    permFolderPermissionTab.classList.add('text-gray-text');
+                    permFolderPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    permMenuPermissionContent.style.display = 'block';
+                    permFolderPermissionContent.style.display = 'none';
+                });
+                
+                permFolderPermissionTab.addEventListener('click', function() {
+                    // 切换选项卡样式
+                    permFolderPermissionTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    permFolderPermissionTab.classList.remove('text-gray-text');
+                    permMenuPermissionTab.classList.add('text-gray-text');
+                    permMenuPermissionTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    
+                    // 切换内容
+                    permFolderPermissionContent.style.display = 'block';
+                    permMenuPermissionContent.style.display = 'none';
+                });
+            }
+            
+            // 实现父子联动功能
+            function setupParentChild联动() {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const parentElement = this.closest('div').parentElement;
+                        
+                        // 处理子菜单变化时父菜单的状态
+                        if (parentElement && parentElement.querySelector('input[type="checkbox"]')) {
+                            const parentCheckbox = parentElement.querySelector('input[type="checkbox"]');
+                            const childCheckboxes = parentElement.querySelectorAll('div input[type="checkbox"]');
+                            
+                            // 检查是否有任何子菜单被勾选
+                            const anyChildChecked = Array.from(childCheckboxes).some(child => child.checked);
+                            
+                            // 如果有子菜单被勾选，勾选父菜单
+                            if (anyChildChecked) {
+                                parentCheckbox.checked = true;
+                            } else {
+                                // 否则取消勾选父菜单
+                                parentCheckbox.checked = false;
+                            }
+                        }
+                        
+                        // 处理父菜单变化时子菜单的状态
+                        const childElements = this.closest('div').querySelectorAll('div input[type="checkbox"]');
+                        if (childElements.length > 0) {
+                            childElements.forEach(child => {
+                                child.checked = this.checked;
+                            });
+                        }
+                    });
+                });
+            }
+            
+            // 初始化父子联动
+            setupParentChild联动();
+        });
+    </script>
+</body>
+</html>

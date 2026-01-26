@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理 - 企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+            .status-active {
+                @apply bg-success/20 text-success;
+            }
+            .status-inactive {
+                @apply bg-danger/20 text-danger;
+            }
+        }
+    </style>
+    <style>
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen font-sans text-text-dark m-0 p-0 overflow-hidden">
+    <!-- 主容器 -->
+    <div class="w-screen h-screen flex flex-col">
+        <!-- 页面标题 -->
+        <div class="bg-white border-b border-gray-border p-4">
+            <h2 class="text-xl font-semibold">日志管理</h2>
+        </div>
+        
+        <!-- 主要内容区 -->
+        <div class="flex-1 overflow-hidden p-0">
+            <div class="h-full bg-white border-t border-gray-border flex flex-col p-4 overflow-y-auto">
+                <!-- 筛选条件 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="font-semibold mb-4">筛选条件</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-text mb-1">时间范围</label>
+                            <input type="date" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-text mb-1">操作类型</label>
+                            <select class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                                <option>全部</option>
+                                <option>登录</option>
+                                <option>上传</option>
+                                <option>下载</option>
+                                <option>审核</option>
+                                <option>删除</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-text mb-1">操作人</label>
+                            <input type="text" placeholder="请输入操作人" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
+                            <i class="fa fa-search mr-1"></i>
+                            <span>查询</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 日志列表 -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b border-gray-border">
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">访问时间</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">访问人员</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">操作类型</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">访问的图纸/文件夹</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">操作结果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 15:30:45</td>
+                                    <td class="py-3 px-4">管理员</td>
+                                    <td class="py-3 px-4">登录</td>
+                                    <td class="py-3 px-4">系统登录</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 14:25:12</td>
+                                    <td class="py-3 px-4">张工</td>
+                                    <td class="py-3 px-4">上传</td>
+                                    <td class="py-3 px-4">办公楼项目/建筑平面图.dwg</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 13:18:56</td>
+                                    <td class="py-3 px-4">王工</td>
+                                    <td class="py-3 px-4">审核</td>
+                                    <td class="py-3 px-4">厂房扩建/结构施工图.dwg</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 12:05:33</td>
+                                    <td class="py-3 px-4">李工</td>
+                                    <td class="py-3 px-4">下载</td>
+                                    <td class="py-3 px-4">仓库改造/电气图.dwg</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 11:40:19</td>
+                                    <td class="py-3 px-4">赵工</td>
+                                    <td class="py-3 px-4">登录</td>
+                                    <td class="py-3 px-4">系统登录</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-inactive">失败</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页 -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mt-6">
+                        <div class="text-sm text-gray-text mb-4 md:mb-0">
+                            显示 1-5 条，共 56 条
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-primary bg-primary text-white rounded-md">1</button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">2</button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">3</button>
+                            <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

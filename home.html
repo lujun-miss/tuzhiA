@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 企业图纸管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+            .card-hover {
+                @apply transition-all-300 hover:shadow-md hover:-translate-y-1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light min-h-screen font-sans text-text-dark">
+    <!-- 主容器 -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- 欢迎信息 -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">欢迎回来，管理员！</h2>
+                    <p class="text-gray-text">今天是 <span id="current-date"></span>，祝您工作愉快！</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-3">
+                    <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
+                        <span class="mr-2">⬆️</span>
+                        <span>上传图纸</span>
+                    </button>
+                    <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
+                        <span class="mr-2">📁</span>
+                        <span>创建文件夹</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <!-- 总图纸数 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-text text-sm">总图纸数</p>
+                        <h3 class="text-2xl font-semibold mt-1">1,248</h3>
+                        <p class="text-success text-xs mt-1"><span class="mr-1">↑</span>12.5% 较上月</p>
+                    </div>
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <span class="text-primary text-xl">📄</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 待审核图纸 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-text text-sm">待审核图纸</p>
+                        <h3 class="text-2xl font-semibold mt-1">24</h3>
+                        <p class="text-danger text-xs mt-1"><span class="mr-1">↑</span>8.3% 较上周</p>
+                    </div>
+                    <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
+                        <span class="text-warning text-xl">⏰</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 总文件夹数 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-text text-sm">总文件夹数</p>
+                        <h3 class="text-2xl font-semibold mt-1">156</h3>
+                        <p class="text-success text-xs mt-1"><span class="mr-1">↑</span>5.2% 较上月</p>
+                    </div>
+                    <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
+                        <span class="text-success text-xl">📁</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统用户数 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-text text-sm">系统用户数</p>
+                        <h3 class="text-2xl font-semibold mt-1">48</h3>
+                        <p class="text-gray-text text-xs mt-1"><span class="mr-1">-</span>0% 较上月</p>
+                    </div>
+                    <div class="w-12 h-12 bg-danger/10 rounded-full flex items-center justify-center">
+                        <span class="text-danger text-xl">👥</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 最近上传的图纸 -->
+            <div class="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold">最近上传的图纸</h3>
+                    <a href="#" class="text-primary text-sm hover:underline transition-all-300">查看全部</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-border">
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">项目名称</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">图纸编号</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">版本号</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">提交时间</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                <td class="py-3 px-4">冶炼设备</td>
+                                <td class="py-3 px-4">SM-2026-001</td>
+                                <td class="py-3 px-4">V1.0</td>
+                                <td class="py-3 px-4 text-sm text-gray-text">2026-01-21</td>
+                                <td class="py-3 px-4">
+                                    <div class="flex space-x-2">
+                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>⬇️</span>
+                                        </a>
+                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
+                                            <span>👁️</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                <td class="py-3 px-4">轧制设备</td>
+                                <td class="py-3 px-4">RM-2026-002</td>
+                                <td class="py-3 px-4">V2.1</td>
+                                <td class="py-3 px-4 text-sm text-gray-text">2026-01-20</td>
+                                <td class="py-3 px-4">
+                                    <div class="flex space-x-2">
+                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>⬇️</span>
+                                        </a>
+                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
+                                            <span>👁️</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                <td class="py-3 px-4">焦化设备</td>
+                                <td class="py-3 px-4">CO-2026-003</td>
+                                <td class="py-3 px-4">V1.5</td>
+                                <td class="py-3 px-4 text-sm text-gray-text">2026-01-19</td>
+                                <td class="py-3 px-4">
+                                    <div class="flex space-x-2">
+                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>⬇️</span>
+                                        </a>
+                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
+                                            <span>👁️</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-light/50 transition-all-300">
+                                <td class="py-3 px-4">烧结设备</td>
+                                <td class="py-3 px-4">SI-2026-004</td>
+                                <td class="py-3 px-4">V3.0</td>
+                                <td class="py-3 px-4 text-sm text-gray-text">2026-01-18</td>
+                                <td class="py-3 px-4">
+                                    <div class="flex space-x-2">
+                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>⬇️</span>
+                                        </a>
+                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
+                                            <span>👁️</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 待审核图纸和系统公告 -->
+            <div class="space-y-6">
+                <!-- 待审核图纸 -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold">待审核图纸</h3>
+                        <span class="bg-warning/20 text-warning text-xs px-2 py-1 rounded-full">8</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium text-sm">冶炼设备 - 高炉结构图</p>
+                                    <p class="text-gray-text text-xs mt-1">提交人：张工</p>
+                                </div>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-gray-text text-xs">2026-01-21</p>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                            </div>
+                        </div>
+                        <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium text-sm">轧制设备 - 轧机装配图</p>
+                                    <p class="text-gray-text text-xs mt-1">提交人：李工</p>
+                                </div>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-gray-text text-xs">2026-01-20</p>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                            </div>
+                        </div>
+                        <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium text-sm">焦化设备 - 焦炉工艺图</p>
+                                    <p class="text-gray-text text-xs mt-1">提交人：王工</p>
+                                </div>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-gray-text text-xs">2026-01-19</p>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-primary text-sm hover:underline transition-all-300">查看全部待审核图纸</button>
+                </div>
+                
+                <!-- 系统公告 -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold">系统公告</h3>
+                        <a href="#" class="text-primary text-sm hover:underline transition-all-300">更多</a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-primary pl-3 py-1">
+                            <p class="font-medium text-sm">系统将于本周日进行维护升级</p>
+                            <p class="text-gray-text text-xs mt-1">2026-01-18</p>
+                        </div>
+                        <div class="border-l-4 border-gray-border pl-3 py-1">
+                            <p class="font-medium text-sm">新增图纸审核流程说明</p>
+                            <p class="text-gray-text text-xs mt-1">2026-01-15</p>
+                        </div>
+                        <div class="border-l-4 border-gray-border pl-3 py-1">
+                            <p class="font-medium text-sm">关于加强图纸安全管理的通知</p>
+                            <p class="text-gray-text text-xs mt-1">2026-01-10</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置当前日期
+            const dateElement = document.getElementById('current-date');
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            dateElement.textContent = now.toLocaleDateString('zh-CN', options);
+        });
+    </script>
+</body>
+</html>
