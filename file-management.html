@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -71,7 +71,7 @@
     </style>
 </head>
 <body class="bg-light min-h-screen font-sans text-text-dark m-0 p-0 overflow-hidden">
-    <!-- 主容器 -->
+    <!-- 容器 -->
     <div class="w-screen h-screen flex flex-row">
         <!-- 左侧文件夹树 -->
         <div class="w-64 bg-white border-r border-gray-border flex flex-col">
@@ -106,35 +106,25 @@
                         <div class="ml-6 pl-2">
                             <div class="folder-tree-item">
                                 <i class="fa fa-folder text-warning mr-2"></i>
-                                <span>冶炼设备</span>
+                                <span>固定文件夹</span>
                                 <i class="fa fa-angle-right ml-auto text-gray-text"></i>
                             </div>
                             <div class="folder-tree-item">
                                 <i class="fa fa-folder text-warning mr-2"></i>
-                                <span>轧制设备</span>
+                                <span>其他文件夹</span>
                                 <i class="fa fa-angle-right ml-auto text-gray-text"></i>
                             </div>
                             <div class="folder-tree-item">
                                 <i class="fa fa-folder text-warning mr-2"></i>
-                                <span>焦化设备</span>
-                                <i class="fa fa-angle-right ml-auto text-gray-text"></i>
-                            </div>
-                            <div class="folder-tree-item">
-                                <i class="fa fa-folder text-warning mr-2"></i>
-                                <span>烧结设备</span>
-                                <i class="fa fa-angle-right ml-auto text-gray-text"></i>
-                            </div>
-                            <div class="folder-tree-item">
-                                <i class="fa fa-folder text-warning mr-2"></i>
-                                <span>辅助设备</span>
+                                <span>审批文件夹</span>
                                 <i class="fa fa-angle-down ml-auto text-gray-text"></i>
                             </div>
                             
-                            <!-- 辅助设备子文件夹 -->
+                            <!-- 审批文件夹子文件夹 -->
                             <div class="ml-6 pl-2">
                                 <div class="folder-tree-item">
                                     <i class="fa fa-folder text-warning mr-2"></i>
-                                    <span>建筑图纸</span>
+                                    <span>装配图纸</span>
                                     <i class="fa fa-angle-right ml-auto text-gray-text"></i>
                                 </div>
                                 <div class="folder-tree-item">
@@ -156,8 +146,7 @@
             <div class="p-4 border-t border-gray-border">
                 <button id="create-folder-btn" class="w-full bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300 flex items-center justify-center">
                     <i class="fa fa-plus mr-2"></i>
-                    创建文件夹
-                </button>
+                    创建文件夹                </button>
             </div>
         </div>
         
@@ -193,11 +182,9 @@
                                 <label class="block text-sm font-medium text-gray-text mb-1">所属文件夹</label>
                                 <select class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
                                     <option>根目录</option>
-                                    <option>冶炼设备</option>
-                                    <option>轧制设备</option>
-                                    <option>焦化设备</option>
-                                    <option>烧结设备</option>
-                                    <option>辅助设备</option>
+                                    <option>固定文件夹</option>
+                                    <option>其他文件夹</option>
+                                    <option>审批文件夹</option>
                                 </select>
                             </div>
                             <div>
@@ -207,7 +194,7 @@
                             <div class="md:col-span-2">
                                 <div class="flex items-center">
                                     <input id="is-bottom" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
-                                    <label for="is-bottom" class="ml-2 block text-sm text-gray-text">是否底层文件夹（如果是底层，则可上传图纸，且不能在此层级下再创建文件夹）</label>
+                                    <label for="is-bottom" class="ml-2 block text-sm text-gray-text">是否底层文件夹(如果是底层，则可上传图纸，且不能在此层级下再创建文件夹)</label>
                                 </div>
                             </div>
                             <div class="md:col-span-2 flex justify-end space-x-2">
@@ -234,7 +221,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 文件夹树展开/折叠
             const folderItems = document.querySelectorAll('.folder-tree-item');
-            
+
             folderItems.forEach(item => {
                 item.addEventListener('click', function() {
                     // 切换展开/折叠图标
@@ -248,25 +235,25 @@
                             icon.classList.add('fa-angle-right');
                         }
                     }
-                    
+
                     // 切换激活状态
                     folderItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
-            
+
             // 底层文件夹逻辑
             const isBottomCheckbox = document.getElementById('is-bottom');
             const createFolderBtn = document.getElementById('create-folder-btn');
             const saveBtn = document.getElementById('save-btn');
-            
+
             if (isBottomCheckbox && createFolderBtn) {
                 // 初始状态
                 updateButtonStates();
-                
+
                 // 监听复选框变化
                 isBottomCheckbox.addEventListener('change', updateButtonStates);
-                
+
                 // 更新按钮状态函数
                 function updateButtonStates() {
                     if (isBottomCheckbox.checked) {
@@ -280,7 +267,7 @@
                     }
                 }
             }
-            
+
             // 创建文件夹按钮点击事件
             if (createFolderBtn) {
                 createFolderBtn.addEventListener('click', function() {
@@ -293,7 +280,7 @@
                     // 这里可以添加实际的文件夹创建逻辑
                 });
             }
-            
+
             // 保存按钮点击事件
             if (saveBtn) {
                 saveBtn.addEventListener('click', function() {
@@ -302,7 +289,8 @@
                         alert('请输入文件夹名称');
                         return;
                     }
-                    alert('文件夹设置保存成功');
+                    alert('文件夹设置保存成功！');
+
                     // 这里可以添加实际的保存逻辑
                 });
             }
@@ -310,3 +298,5 @@
     </script>
 </body>
 </html>
+
+

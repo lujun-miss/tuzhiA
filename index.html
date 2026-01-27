@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -44,7 +44,7 @@
     </style>
 </head>
 <body class="bg-light min-h-screen font-sans text-text-dark">
-    <!-- 主容器 -->
+    <!-- 容器 -->
     <div class="flex h-screen overflow-hidden">
         <!-- 左侧导航栏 -->
         <aside class="bg-white shadow-sm w-64 z-10 hidden md:block">
@@ -67,7 +67,7 @@
                     <span class="mr-3">📁</span>文件管理
                 </a>
                 <a href="#" class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300" data-target="drawing-management.html">
-                    <span class="mr-3">📄</span>图纸管理
+                    <span class="mr-3">📋</span>图纸管理
                 </a>
                 <div class="nav-item">
                     <div class="nav-link flex items-center px-4 py-3 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 cursor-pointer">
@@ -76,13 +76,13 @@
                     </div>
                     <div class="sub-nav">
                         <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="user-management.html">
-                            <span class="mr-3">👥</span>用户管理
+                            <span class="mr-3">👤</span>用户管理
                         </a>
                         <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="role-management.html">
-                            <span class="mr-3">🛡️</span>角色管理
+                            <span class="mr-3">👥</span>角色管理
                         </a>
                         <a href="#" class="nav-link flex items-center px-4 py-2 text-gray-text hover:bg-primary/10 hover:text-primary transition-all-300 ml-6" data-target="log-management.html">
-                            <span class="mr-3">📋</span>日志管理
+                            <span class="mr-3">📊</span>日志管理
                         </a>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                 </div>
             </header>
             
-            <!-- 移动端导航菜单 -->
+            <!-- 移动端底部菜单 -->
             <div class="md:hidden bg-white border-t border-gray-border">
                 <div class="flex justify-around py-2">
                     <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="home.html">
@@ -140,7 +140,7 @@
                         <span class="text-xs mt-1">文件管理</span>
                     </a>
                     <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="drawing-management.html">
-                        <span class="text-lg">📄</span>
+                        <span class="text-lg">📋</span>
                         <span class="text-xs mt-1">图纸管理</span>
                     </a>
                     <a href="#" class="nav-link flex flex-col items-center py-2 text-gray-text hover:text-primary transition-all-300" data-target="system-settings.html">
@@ -150,7 +150,7 @@
                 </div>
             </div>
             
-            <!-- 主内容区 - iframe -->
+            <!-- 内容区域 - iframe -->
             <main class="flex-1 overflow-hidden">
                 <iframe id="content-frame" src="login.html" class="w-full h-full border-0"></iframe>
             </main>
@@ -195,3 +195,5 @@
     </script>
 </body>
 </html>
+
+

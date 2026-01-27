@@ -46,18 +46,18 @@
     </style>
 </head>
 <body class="bg-light min-h-screen font-sans text-text-dark">
-    <!-- 主容器 -->
+    <!-- 容器 -->
     <div class="container mx-auto px-4 py-6">
         <!-- 欢迎信息 -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between">
                 <div>
                     <h2 class="text-xl font-semibold mb-2">欢迎回来，管理员！</h2>
-                    <p class="text-gray-text">今天是 <span id="current-date"></span>，祝您工作愉快！</p>
+                    <p class="text-gray-text">今天是：<span id="current-date"></span>，祝您工作顺利！</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex space-x-3">
                     <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
-                        <span class="mr-2">⬆️</span>
+                        <span class="mr-2">📤</span>
                         <span>上传图纸</span>
                     </button>
                     <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
@@ -76,24 +76,24 @@
                     <div>
                         <p class="text-gray-text text-sm">总图纸数</p>
                         <h3 class="text-2xl font-semibold mt-1">1,248</h3>
-                        <p class="text-success text-xs mt-1"><span class="mr-1">↑</span>12.5% 较上月</p>
+                        <p class="text-success text-xs mt-1"><span class="mr-1">↗</span>12.5% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span class="text-primary text-xl">📄</span>
+                        <span class="text-primary text-xl">📋</span>
                     </div>
                 </div>
             </div>
             
-            <!-- 待审核图纸 -->
+            <!-- 待审批图纸 -->
             <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-text text-sm">待审核图纸</p>
+                        <p class="text-gray-text text-sm">待审批图纸</p>
                         <h3 class="text-2xl font-semibold mt-1">24</h3>
-                        <p class="text-danger text-xs mt-1"><span class="mr-1">↑</span>8.3% 较上周</p>
+                        <p class="text-danger text-xs mt-1"><span class="mr-1">↗</span>8.3% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
-                        <span class="text-warning text-xl">⏰</span>
+                        <span class="text-warning text-xl">⚠️</span>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                     <div>
                         <p class="text-gray-text text-sm">总文件夹数</p>
                         <h3 class="text-2xl font-semibold mt-1">156</h3>
-                        <p class="text-success text-xs mt-1"><span class="mr-1">↑</span>5.2% 较上月</p>
+                        <p class="text-success text-xs mt-1"><span class="mr-1">↗</span>5.2% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
                         <span class="text-success text-xl">📁</span>
@@ -118,7 +118,7 @@
                     <div>
                         <p class="text-gray-text text-sm">系统用户数</p>
                         <h3 class="text-2xl font-semibold mt-1">48</h3>
-                        <p class="text-gray-text text-xs mt-1"><span class="mr-1">-</span>0% 较上月</p>
+                        <p class="text-gray-text text-xs mt-1"><span class="mr-1">-</span>0% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-danger/10 rounded-full flex items-center justify-center">
                         <span class="text-danger text-xl">👥</span>
@@ -142,55 +142,55 @@
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">项目名称</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">图纸编号</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">版本号</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">提交时间</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">上传时间</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">冶炼设备</td>
+                                <td class="py-3 px-4">注塑设备</td>
                                 <td class="py-3 px-4">SM-2026-001</td>
                                 <td class="py-3 px-4">V1.0</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-21</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
                                         <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>⬇️</span>
+                                            <span>👁️</span>
                                         </a>
                                         <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>👁️</span>
+                                            <span>📋</span>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">轧制设备</td>
+                                <td class="py-3 px-4">热压设备</td>
                                 <td class="py-3 px-4">RM-2026-002</td>
                                 <td class="py-3 px-4">V2.1</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-20</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
                                         <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>⬇️</span>
+                                            <span>👁️</span>
                                         </a>
                                         <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>👁️</span>
+                                            <span>📋</span>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">焦化设备</td>
+                                <td class="py-3 px-4">冷却设备</td>
                                 <td class="py-3 px-4">CO-2026-003</td>
                                 <td class="py-3 px-4">V1.5</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-19</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
                                         <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>⬇️</span>
+                                            <span>👁️</span>
                                         </a>
                                         <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>👁️</span>
+                                            <span>📋</span>
                                         </a>
                                     </div>
                                 </td>
@@ -203,10 +203,10 @@
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
                                         <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>⬇️</span>
+                                            <span>👁️</span>
                                         </a>
                                         <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>👁️</span>
+                                            <span>📋</span>
                                         </a>
                                     </div>
                                 </td>
@@ -216,56 +216,56 @@
                 </div>
             </div>
             
-            <!-- 待审核图纸和系统公告 -->
+            <!-- 待审批图纸和系统公告 -->
             <div class="space-y-6">
-                <!-- 待审核图纸 -->
+                <!-- 待审批图纸 -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold">待审核图纸</h3>
+                        <h3 class="font-semibold">待审批图纸</h3>
                         <span class="bg-warning/20 text-warning text-xs px-2 py-1 rounded-full">8</span>
                     </div>
                     <div class="space-y-3">
                         <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-medium text-sm">冶炼设备 - 高炉结构图</p>
-                                    <p class="text-gray-text text-xs mt-1">提交人：张工</p>
+                                    <p class="font-medium text-sm">注塑设备 - 高温结构图纸</p>
+                                    <p class="text-gray-text text-xs mt-1">上传人：李工</p>
                                 </div>
-                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审批</span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-21</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
                             </div>
                         </div>
                         <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-medium text-sm">轧制设备 - 轧机装配图</p>
-                                    <p class="text-gray-text text-xs mt-1">提交人：李工</p>
+                                    <p class="font-medium text-sm">热压设备 - 热场配置图纸</p>
+                                    <p class="text-gray-text text-xs mt-1">上传人：王工</p>
                                 </div>
-                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审批</span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-20</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
                             </div>
                         </div>
                         <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-medium text-sm">焦化设备 - 焦炉工艺图</p>
-                                    <p class="text-gray-text text-xs mt-1">提交人：王工</p>
+                                    <p class="font-medium text-sm">冷却设备 - 冷却系统图纸</p>
+                                    <p class="text-gray-text text-xs mt-1">上传人：张工</p>
                                 </div>
-                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审核</span>
+                                <span class="bg-warning/20 text-warning text-xs px-2 py-0.5 rounded-full">待审批</span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-19</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审核</button>
+                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
                             </div>
                         </div>
                     </div>
-                    <button class="w-full mt-4 text-primary text-sm hover:underline transition-all-300">查看全部待审核图纸</button>
+                    <button class="w-full mt-4 text-primary text-sm hover:underline transition-all-300">查看全部待审批图纸</button>
                 </div>
                 
                 <!-- 系统公告 -->
@@ -276,11 +276,11 @@
                     </div>
                     <div class="space-y-3">
                         <div class="border-l-4 border-primary pl-3 py-1">
-                            <p class="font-medium text-sm">系统将于本周日进行维护升级</p>
+                            <p class="font-medium text-sm">系统将于本周末进行版本升级</p>
                             <p class="text-gray-text text-xs mt-1">2026-01-18</p>
                         </div>
                         <div class="border-l-4 border-gray-border pl-3 py-1">
-                            <p class="font-medium text-sm">新增图纸审核流程说明</p>
+                            <p class="font-medium text-sm">新增图纸审批流程说明</p>
                             <p class="text-gray-text text-xs mt-1">2026-01-15</p>
                         </div>
                         <div class="border-l-4 border-gray-border pl-3 py-1">
@@ -306,3 +306,5 @@
     </script>
 </body>
 </html>
+
+
