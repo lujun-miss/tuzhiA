@@ -6,6 +6,8 @@
     <title>首页 - 菏泽双龙冶金机械</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 自定义配置 -->
     <script>
         tailwind.config = {
@@ -44,6 +46,32 @@
             }
         }
     </style>
+    <script>
+        // 切换提示框显示/隐藏
+        function toggleTooltip(button, text) {
+            const tooltip = button.nextElementSibling;
+            
+            // 隐藏所有其他提示框
+            document.querySelectorAll('.tooltip').forEach(t => {
+                if (t !== tooltip) {
+                    t.classList.add('opacity-0', 'invisible');
+                }
+            });
+            
+            // 切换当前提示框
+            tooltip.classList.toggle('opacity-0');
+            tooltip.classList.toggle('invisible');
+        }
+        
+        // 点击页面其他地方关闭提示框
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.relative')) {
+                document.querySelectorAll('.tooltip').forEach(tooltip => {
+                    tooltip.classList.add('opacity-0', 'invisible');
+                });
+            }
+        });
+    </script>
 </head>
 <body class="bg-light min-h-screen font-sans text-text-dark">
     <!-- 容器 -->
@@ -74,9 +102,19 @@
             <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-text text-sm">总图纸数</p>
+                        <div class="flex items-center">
+                            <p class="text-gray-text text-sm">总图纸数</p>
+                            <div class="relative ml-1">
+                                <button class="text-primary hover:text-primary/80 transition-all-300 focus:outline-none" 
+                                        onclick="toggleTooltip(this, '总图纸数是系统中所有图纸的总数，包括所有文件夹中的图纸')">
+                                    <i class="fa fa-question-circle"></i>
+                                </button>
+                                <div class="tooltip absolute bottom-full left-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 invisible transition-all duration-300 z-10">
+                                    总图纸数是系统中所有图纸的总数，包括所有文件夹中的图纸
+                                </div>
+                            </div>
+                        </div>
                         <h3 class="text-2xl font-semibold mt-1">1,248</h3>
-                        <p class="text-success text-xs mt-1"><span class="mr-1">↗</span>12.5% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                         <span class="text-primary text-xl">📋</span>
@@ -88,9 +126,19 @@
             <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-text text-sm">待审批图纸</p>
+                        <div class="flex items-center">
+                            <p class="text-gray-text text-sm">待审批图纸</p>
+                            <div class="relative ml-1">
+                                <button class="text-primary hover:text-primary/80 transition-all-300 focus:outline-none" 
+                                        onclick="toggleTooltip(this, '待审批图纸是指上传到需要审批的文件夹中，尚未通过审批的图纸')">
+                                    <i class="fa fa-question-circle"></i>
+                                </button>
+                                <div class="tooltip absolute bottom-full left-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 invisible transition-all duration-300 z-10">
+                                    待审批图纸是指上传到需要审批的文件夹中，尚未通过审批的图纸
+                                </div>
+                            </div>
+                        </div>
                         <h3 class="text-2xl font-semibold mt-1">24</h3>
-                        <p class="text-danger text-xs mt-1"><span class="mr-1">↗</span>8.3% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
                         <span class="text-warning text-xl">⚠️</span>
@@ -102,9 +150,19 @@
             <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-text text-sm">总文件夹数</p>
+                        <div class="flex items-center">
+                            <p class="text-gray-text text-sm">总文件夹数</p>
+                            <div class="relative ml-1">
+                                <button class="text-primary hover:text-primary/80 transition-all-300 focus:outline-none" 
+                                        onclick="toggleTooltip(this, '总文件夹数是系统中所有文件夹的总数，包括所有层级的文件夹')">
+                                    <i class="fa fa-question-circle"></i>
+                                </button>
+                                <div class="tooltip absolute bottom-full left-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 invisible transition-all duration-300 z-10">
+                                    总文件夹数是系统中所有文件夹的总数，包括所有层级的文件夹
+                                </div>
+                            </div>
+                        </div>
                         <h3 class="text-2xl font-semibold mt-1">156</h3>
-                        <p class="text-success text-xs mt-1"><span class="mr-1">↗</span>5.2% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
                         <span class="text-success text-xl">📁</span>
@@ -116,9 +174,19 @@
             <div class="bg-white rounded-lg shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-text text-sm">系统用户数</p>
+                        <div class="flex items-center">
+                            <p class="text-gray-text text-sm">系统用户数</p>
+                            <div class="relative ml-1">
+                                <button class="text-primary hover:text-primary/80 transition-all-300 focus:outline-none" 
+                                        onclick="toggleTooltip(this, '系统用户数是指有权限访问系统的所有用户数量')">
+                                    <i class="fa fa-question-circle"></i>
+                                </button>
+                                <div class="tooltip absolute bottom-full left-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 invisible transition-all duration-300 z-10">
+                                    系统用户数是指有权限访问系统的所有用户数量
+                                </div>
+                            </div>
+                        </div>
                         <h3 class="text-2xl font-semibold mt-1">48</h3>
-                        <p class="text-gray-text text-xs mt-1"><span class="mr-1">-</span>0% 较上周</p>
                     </div>
                     <div class="w-12 h-12 bg-danger/10 rounded-full flex items-center justify-center">
                         <span class="text-danger text-xl">👥</span>
@@ -139,7 +207,7 @@
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b border-gray-border">
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">项目名称</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">所属文件夹</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">图纸编号</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">版本号</th>
                                 <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">上传时间</th>
@@ -148,65 +216,53 @@
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">注塑设备</td>
+                                <td class="py-3 px-4">固定文件夹</td>
                                 <td class="py-3 px-4">SM-2026-001</td>
                                 <td class="py-3 px-4">V1.0</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-21</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
-                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>👁️</span>
-                                        </a>
-                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>📋</span>
+                                        <a href="drawing-management.html" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>查看</span>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">热压设备</td>
+                                <td class="py-3 px-4">其他文件夹</td>
                                 <td class="py-3 px-4">RM-2026-002</td>
                                 <td class="py-3 px-4">V2.1</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-20</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
-                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>👁️</span>
-                                        </a>
-                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>📋</span>
+                                        <a href="drawing-management.html" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>查看</span>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">冷却设备</td>
+                                <td class="py-3 px-4">审批文件夹</td>
                                 <td class="py-3 px-4">CO-2026-003</td>
                                 <td class="py-3 px-4">V1.5</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-19</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
-                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>👁️</span>
-                                        </a>
-                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>📋</span>
+                                        <a href="drawing-management.html" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>查看</span>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="hover:bg-light/50 transition-all-300">
-                                <td class="py-3 px-4">烧结设备</td>
+                                <td class="py-3 px-4">固定文件夹</td>
                                 <td class="py-3 px-4">SI-2026-004</td>
                                 <td class="py-3 px-4">V3.0</td>
                                 <td class="py-3 px-4 text-sm text-gray-text">2026-01-18</td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-2">
-                                        <a href="#" class="text-primary hover:text-primary/80 transition-all-300">
-                                            <span>👁️</span>
-                                        </a>
-                                        <a href="#" class="text-gray-text hover:text-primary transition-all-300">
-                                            <span>📋</span>
+                                        <a href="drawing-management.html" class="text-primary hover:text-primary/80 transition-all-300">
+                                            <span>查看</span>
                                         </a>
                                     </div>
                                 </td>
@@ -235,7 +291,7 @@
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-21</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
+                                <a href="drawing-management.html?action=approve&id=1" class="text-primary text-sm hover:underline transition-all-300">审批</a>
                             </div>
                         </div>
                         <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
@@ -248,7 +304,7 @@
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-20</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
+                                <a href="drawing-management.html?action=approve&id=2" class="text-primary text-sm hover:underline transition-all-300">审批</a>
                             </div>
                         </div>
                         <div class="border border-gray-border rounded-md p-3 hover:border-primary transition-all-300">
@@ -261,34 +317,14 @@
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <p class="text-gray-text text-xs">2026-01-19</p>
-                                <button class="text-primary text-sm hover:underline transition-all-300">审批</button>
+                                <a href="drawing-management.html?action=approve&id=3" class="text-primary text-sm hover:underline transition-all-300">审批</a>
                             </div>
                         </div>
                     </div>
                     <button class="w-full mt-4 text-primary text-sm hover:underline transition-all-300">查看全部待审批图纸</button>
                 </div>
                 
-                <!-- 系统公告 -->
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold">系统公告</h3>
-                        <a href="#" class="text-primary text-sm hover:underline transition-all-300">更多</a>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="border-l-4 border-primary pl-3 py-1">
-                            <p class="font-medium text-sm">系统将于本周末进行版本升级</p>
-                            <p class="text-gray-text text-xs mt-1">2026-01-18</p>
-                        </div>
-                        <div class="border-l-4 border-gray-border pl-3 py-1">
-                            <p class="font-medium text-sm">新增图纸审批流程说明</p>
-                            <p class="text-gray-text text-xs mt-1">2026-01-15</p>
-                        </div>
-                        <div class="border-l-4 border-gray-border pl-3 py-1">
-                            <p class="font-medium text-sm">关于加强图纸安全管理的通知</p>
-                            <p class="text-gray-text text-xs mt-1">2026-01-10</p>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

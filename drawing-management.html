@@ -1970,6 +1970,25 @@
             
             // 初始化上传文件夹树
             initUploadFolderTree();
+            // 处理URL参数，支持直接跳转到审批页面
+            function handleUrlParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const action = urlParams.get('action');
+                const drawingId = urlParams.get('id');
+                
+                if (action === 'approve' && drawingId) {
+                    // 显示审批模态框
+                    const auditModal = document.getElementById('audit-modal');
+                    if (auditModal) {
+                        auditModal.classList.remove('hidden');
+                        // 可以根据drawingId加载对应的图纸信息
+                        console.log('审批图纸ID:', drawingId);
+                    }
+                }
+            }
+            
+            // 调用处理URL参数的函数
+            handleUrlParams();
         });
     </script>
 </body>
