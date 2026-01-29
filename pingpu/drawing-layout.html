@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图纸平铺布局 - 菏泽双龙冶金机械</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        success: '#52c41a',
+                        warning: '#faad14',
+                        danger: '#f5222d',
+                        light: '#f0f2f5',
+                        'gray-border': '#e8e8e8',
+                        'gray-text': '#8c8c8c',
+                        'text-dark': '#262626',
+                        'window-bg': '#f8f9fa',
+                        'window-border': '#dee2e6',
+                        'window-title': '#0078d4'
+                    },
+                    fontFamily: {
+                        sans: ['Microsoft YaHei', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .shadow-hover {
+                @apply transition-all-300 hover:shadow-md;
+            }
+            .window-card {
+                @apply bg-white border border-window-border rounded-md overflow-hidden transition-all-300 hover:shadow-lg;
+            }
+            .window-title-bar {
+                @apply bg-window-title text-white px-3 py-2 flex items-center justify-between;
+            }
+            .window-content {
+                @apply p-3;
+            }
+            .icon-button {
+                @apply w-6 h-6 flex items-center justify-center rounded-md hover:bg-white/20 transition-all-300;
+            }
+            .drawing-tile {
+                @apply border border-gray-border rounded-md p-3 transition-all-300 hover:border-primary hover:shadow-md cursor-pointer;
+            }
+            .status-badge {
+                @apply text-xs px-2 py-0.5 rounded-full;
+            }
+            .status-pending {
+                @apply bg-warning/20 text-warning;
+            }
+            .status-approved {
+                @apply bg-success/20 text-success;
+            }
+            .status-rejected {
+                @apply bg-danger/20 text-danger;
+            }
+            .status-no-approval {
+                @apply bg-gray-100 text-gray-text;
+            }
+        }
+    </style>
+    <style>
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* 窗口风格样式 */
+        .window-card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* 平铺网格样式 */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        /* 拖拽效果 */
+        .drawing-tile.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+    </style>
+</head>
+<body class="bg-window-bg min-h-screen font-sans text-text-dark">
+    <!-- 容器 -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- 欢迎信息 -->
+        <div class="window-card mb-6">
+            <div class="window-title-bar">
+                <div class="flex items-center">
+                    <i class="fa fa-home mr-2"></i>
+                    <h2 class="font-semibold">图纸管理系统</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="icon-button" title="最小化">
+                        <i class="fa fa-window-minimize"></i>
+                    </button>
+                    <button class="icon-button" title="最大化">
+                        <i class="fa fa-window-maximize"></i>
+                    </button>
+                    <button class="icon-button" title="关闭">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-1">欢迎回来，管理员！</h3>
+                        <p class="text-gray-text">今天是：<span id="current-date"></span>，祝您工作顺利！</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <a href="../drawing-management.html" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
+                            <i class="fa fa-upload mr-2"></i>
+                            <span>上传图纸</span>
+                        </a>
+                        <a href="../file-management.html" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
+                            <i class="fa fa-folder mr-2"></i>
+                            <span>创建文件夹</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计信息 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <!-- 总图纸数 -->
+            <div class="window-card">
+                <div class="window-title-bar bg-primary">
+                    <h3 class="font-medium text-sm">总图纸数</h3>
+                </div>
+                <div class="window-content">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-2xl font-semibold">1,248</h4>
+                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fa fa-file-text-o text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 待审批图纸 -->
+            <div class="window-card">
+                <div class="window-title-bar bg-warning">
+                    <h3 class="font-medium text-sm">待审批图纸</h3>
+                </div>
+                <div class="window-content">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-2xl font-semibold">24</h4>
+                        <div class="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+                            <i class="fa fa-clock-o text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 总文件夹数 -->
+            <div class="window-card">
+                <div class="window-title-bar bg-success">
+                    <h3 class="font-medium text-sm">总文件夹数</h3>
+                </div>
+                <div class="window-content">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-2xl font-semibold">156</h4>
+                        <div class="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+                            <i class="fa fa-folder-o text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统用户数 -->
+            <div class="window-card">
+                <div class="window-title-bar bg-danger">
+                    <h3 class="font-medium text-sm">系统用户数</h3>
+                </div>
+                <div class="window-content">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-2xl font-semibold">48</h4>
+                        <div class="w-10 h-10 bg-danger/10 rounded-full flex items-center justify-center">
+                            <i class="fa fa-users text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="window-card">
+            <div class="window-title-bar">
+                <div class="flex items-center">
+                    <i class="fa fa-th-large mr-2"></i>
+                    <h2 class="font-semibold">图纸平铺视图</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索图纸..." class="px-3 py-1 text-sm border border-gray-border rounded-md focus:outline-none focus:border-primary">
+                        <i class="fa fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-text"></i>
+                    </div>
+                    <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-3 py-1 rounded-md text-sm transition-all-300">
+                        <i class="fa fa-filter mr-1"></i> 筛选
+                    </button>
+                </div>
+            </div>
+            <div class="window-content">
+                <!-- 内容区域 -->
+                <div class="flex">
+                    <!-- 左侧文件夹导航 -->
+                    <div class="w-64 border-r border-gray-border pr-4 mr-4">
+                        <h3 class="font-medium mb-3 text-sm">文件夹导航</h3>
+                        <div class="folder-tree">
+                            <!-- 根目录 -->
+                            <div class="folder-item mb-2">
+                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="root">
+                                    <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
+                                    <span class="folder-name font-medium">根目录</span>
+                                    <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                </div>
+                                <div class="folder-children ml-6 mt-1 space-y-1">
+                                    <!-- 定型文件 -->
+                                    <div class="folder-item">
+                                        <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="fixed">
+                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                            <span class="folder-name">定型文件</span>
+                                            <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                        </div>
+                                        <div class="folder-children ml-6 mt-1 space-y-1 hidden">
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="fixed-structural">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">结构图纸</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="fixed-electrical">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">电气图纸</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="fixed-assembly">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">装配图纸</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 审批文件 -->
+                                    <div class="folder-item">
+                                        <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="approval">
+                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                            <span class="folder-name">审批文件</span>
+                                            <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                        </div>
+                                        <div class="folder-children ml-6 mt-1 space-y-1 hidden">
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="approval-structural">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">结构图纸</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="approval-electrical">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">电气图纸</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="approval-assembly">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">装配图纸</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 财务文件 -->
+                                    <div class="folder-item">
+                                        <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="finance">
+                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                            <span class="folder-name">财务文件</span>
+                                            <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                        </div>
+                                        <div class="folder-children ml-6 mt-1 space-y-1 hidden">
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="finance-budget">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">预算文件</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="finance-cost">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">成本文件</span>
+                                                </div>
+                                            </div>
+                                            <div class="folder-item">
+                                                <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300" data-folder="finance-invoice">
+                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                    <span class="folder-name">发票文件</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧内容区域 -->
+                    <div class="flex-1">
+                        <!-- 文件夹导航 -->
+                        <div class="mb-4 flex items-center text-sm" id="breadcrumb">
+                            <a href="#" class="text-primary hover:underline" data-folder="root">根目录</a>
+                        </div>
+                        
+                        <!-- 内容显示区域 -->
+                        <div id="content-area">
+                            <!-- 根目录内容 -->
+                            <div id="content-root" class="content-section">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-folder-open text-4xl text-gray-text mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">请选择一个文件夹</h3>
+                                    <p class="text-gray-text">从左侧导航中选择文件夹查看图纸</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 定型文件内容 -->
+                            <div id="content-fixed" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-folder text-4xl text-warning mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">定型文件</h3>
+                                    <p class="text-gray-text">请选择子文件夹查看图纸</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 审批文件内容 -->
+                            <div id="content-approval" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-folder text-4xl text-warning mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">审批文件</h3>
+                                    <p class="text-gray-text">请选择子文件夹查看图纸</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 财务文件内容 -->
+                            <div id="content-finance" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-folder text-4xl text-warning mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">财务文件</h3>
+                                    <p class="text-gray-text">请选择子文件夹查看图纸</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 结构图纸内容 -->
+                            <div id="content-fixed-structural" class="content-section hidden">
+                                <h3 class="font-medium mb-4">结构图纸</h3>
+                                <!-- 图纸平铺网格 -->
+                                <div class="tile-grid">
+                                    <!-- 图纸1 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">SM-2026-001</h3>
+                                            <span class="status-badge status-pending">待审批</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">高温设备结构图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V1.0</span>
+                                            <span><i class="fa fa-user mr-1"></i> 李工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-21</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="审批">
+                                                    <i class="fa fa-check-circle"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 图纸2 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">RM-2026-002</h3>
+                                            <span class="status-badge status-approved">已通过</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">热压设备热场配置图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V2.1</span>
+                                            <span><i class="fa fa-user mr-1"></i> 王工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-20</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 电气图纸内容 -->
+                            <div id="content-fixed-electrical" class="content-section hidden">
+                                <h3 class="font-medium mb-4">电气图纸</h3>
+                                <!-- 图纸平铺网格 -->
+                                <div class="tile-grid">
+                                    <!-- 图纸3 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">BX-2026-006</h3>
+                                            <span class="status-badge status-approved">已通过</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">电气控制系统图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V2.0</span>
+                                            <span><i class="fa fa-user mr-1"></i> 赵工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-16</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 装配图纸内容 -->
+                            <div id="content-fixed-assembly" class="content-section hidden">
+                                <h3 class="font-medium mb-4">装配图纸</h3>
+                                <!-- 图纸平铺网格 -->
+                                <div class="tile-grid">
+                                    <!-- 图纸4 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">AX-2026-005</h3>
+                                            <span class="status-badge status-pending">待审批</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">装配设备图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V1.2</span>
+                                            <span><i class="fa fa-user mr-1"></i> 陈工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-17</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="审批">
+                                                    <i class="fa fa-check-circle"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 审批结构图纸内容 -->
+                            <div id="content-approval-structural" class="content-section hidden">
+                                <h3 class="font-medium mb-4">审批 - 结构图纸</h3>
+                                <!-- 图纸平铺网格 -->
+                                <div class="tile-grid">
+                                    <!-- 图纸5 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">CO-2026-003</h3>
+                                            <span class="status-badge status-rejected">已退回</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">冷却系统图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V1.5</span>
+                                            <span><i class="fa fa-user mr-1"></i> 张工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-19</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="修改">
+                                                    <i class="fa fa-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 审批电气图纸内容 -->
+                            <div id="content-approval-electrical" class="content-section hidden">
+                                <h3 class="font-medium mb-4">审批 - 电气图纸</h3>
+                                <!-- 图纸平铺网格 -->
+                                <div class="tile-grid">
+                                    <!-- 图纸6 -->
+                                    <div class="drawing-tile">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-medium">SI-2026-004</h3>
+                                            <span class="status-badge status-no-approval">无需审批</span>
+                                        </div>
+                                        <p class="text-sm text-gray-text mb-2">注塑设备高温结构图纸</p>
+                                        <div class="flex items-center text-xs text-gray-text mb-3">
+                                            <span class="mr-3"><i class="fa fa-tag mr-1"></i> V3.0</span>
+                                            <span><i class="fa fa-user mr-1"></i> 刘工</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-text">2026-01-18</span>
+                                            <div class="flex space-x-1">
+                                                <button class="text-primary hover:text-primary/80 p-1" title="查看">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 p-1" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 审批装配图纸内容 -->
+                            <div id="content-approval-assembly" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-file-text-o text-4xl text-gray-text mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">暂无图纸</h3>
+                                    <p class="text-gray-text">此文件夹中暂无图纸</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 财务文件内容 -->
+                            <div id="content-finance-budget" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-file-text-o text-4xl text-gray-text mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">预算文件</h3>
+                                    <p class="text-gray-text">此文件夹中暂无图纸</p>
+                                </div>
+                            </div>
+                            
+                            <div id="content-finance-cost" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-file-text-o text-4xl text-gray-text mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">成本文件</h3>
+                                    <p class="text-gray-text">此文件夹中暂无图纸</p>
+                                </div>
+                            </div>
+                            
+                            <div id="content-finance-invoice" class="content-section hidden">
+                                <div class="text-center py-12">
+                                    <i class="fa fa-file-text-o text-4xl text-gray-text mb-4"></i>
+                                    <h3 class="text-lg font-medium mb-2">发票文件</h3>
+                                    <p class="text-gray-text">此文件夹中暂无图纸</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 分页 -->
+                        <div class="mt-6 flex items-center justify-between">
+                            <div class="text-sm text-gray-text">
+                                显示 1-6 条，共 24 条
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                    <i class="fa fa-angle-left"></i>
+                                </button>
+                                <button class="w-8 h-8 flex items-center justify-center border border-primary bg-primary text-white rounded-md">1</button>
+                                <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">2</button>
+                                <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">3</button>
+                                <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置当前日期
+            const dateElement = document.getElementById('current-date');
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            dateElement.textContent = now.toLocaleDateString('zh-CN', options);
+            
+            // 图纸卡片点击事件
+            const drawingTiles = document.querySelectorAll('.drawing-tile');
+            drawingTiles.forEach(tile => {
+                tile.addEventListener('click', function(e) {
+                    // 阻止事件冒泡，避免点击按钮时触发卡片点击
+                    if (e.target.closest('button')) {
+                        return;
+                    }
+                    // 模拟查看图纸详情
+                    alert('查看图纸详情：' + this.querySelector('h3').textContent);
+                });
+            });
+            
+            // 图标按钮点击事件
+            const iconButtons = document.querySelectorAll('.icon-button');
+            iconButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 模拟窗口操作
+                    const title = this.getAttribute('title');
+                    if (title === '关闭') {
+                        if (confirm('确定要关闭此窗口吗？')) {
+                            alert('窗口已关闭');
+                        }
+                    } else if (title === '最小化') {
+                        alert('窗口已最小化');
+                    } else if (title === '最大化') {
+                        alert('窗口已最大化');
+                    }
+                });
+            });
+            
+            // 文件夹展开/折叠功能
+            const folderHeaders = document.querySelectorAll('.folder-header');
+            folderHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const folderItem = this.closest('.folder-item');
+                    const children = folderItem.querySelector('.folder-children');
+                    const toggle = this.querySelector('.folder-toggle');
+                    const icon = this.querySelector('.folder-icon');
+                    
+                    // 处理子文件夹展开/折叠
+                    if (children) {
+                        children.classList.toggle('hidden');
+                        if (toggle) {
+                            if (toggle.classList.contains('fa-angle-right')) {
+                                toggle.classList.remove('fa-angle-right');
+                                toggle.classList.add('fa-angle-down');
+                            } else if (toggle.classList.contains('fa-angle-down')) {
+                                toggle.classList.remove('fa-angle-down');
+                                toggle.classList.add('fa-angle-right');
+                            }
+                        }
+                        if (icon) {
+                            if (icon.classList.contains('fa-folder')) {
+                                icon.classList.remove('fa-folder');
+                                icon.classList.add('fa-folder-open');
+                            } else if (icon.classList.contains('fa-folder-open')) {
+                                icon.classList.remove('fa-folder-open');
+                                icon.classList.add('fa-folder');
+                            }
+                        }
+                    }
+                    
+                    // 处理文件夹内容显示
+                    const folderId = this.getAttribute('data-folder');
+                    if (folderId) {
+                        // 隐藏所有内容区域
+                        document.querySelectorAll('.content-section').forEach(section => {
+                            section.classList.add('hidden');
+                        });
+                        
+                        // 显示对应文件夹内容
+                        const contentSection = document.getElementById('content-' + folderId);
+                        if (contentSection) {
+                            contentSection.classList.remove('hidden');
+                        }
+                        
+                        // 更新面包屑导航
+                        updateBreadcrumb(folderId);
+                    }
+                });
+            });
+            
+            // 更新面包屑导航
+            function updateBreadcrumb(folderId) {
+                const breadcrumb = document.getElementById('breadcrumb');
+                let breadcrumbHtml = '';
+                
+                // 根据文件夹ID生成面包屑
+                switch (folderId) {
+                    case 'root':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a>';
+                        break;
+                    case 'fixed':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed">定型文件</a>';
+                        break;
+                    case 'approval':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval">审批文件</a>';
+                        break;
+                    case 'finance':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance">财务文件</a>';
+                        break;
+                    case 'fixed-structural':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed">定型文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed-structural">结构图纸</a>';
+                        break;
+                    case 'fixed-electrical':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed">定型文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed-electrical">电气图纸</a>';
+                        break;
+                    case 'fixed-assembly':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed">定型文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="fixed-assembly">装配图纸</a>';
+                        break;
+                    case 'approval-structural':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval">审批文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval-structural">结构图纸</a>';
+                        break;
+                    case 'approval-electrical':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval">审批文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval-electrical">电气图纸</a>';
+                        break;
+                    case 'approval-assembly':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval">审批文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="approval-assembly">装配图纸</a>';
+                        break;
+                    case 'finance-budget':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance">财务文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance-budget">预算文件</a>';
+                        break;
+                    case 'finance-cost':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance">财务文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance-cost">成本文件</a>';
+                        break;
+                    case 'finance-invoice':
+                        breadcrumbHtml = '<a href="#" class="text-primary hover:underline" data-folder="root">根目录</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance">财务文件</a><i class="fa fa-angle-right mx-2 text-gray-text"></i><a href="#" class="text-primary hover:underline" data-folder="finance-invoice">发票文件</a>';
+                        break;
+                }
+                
+                breadcrumb.innerHTML = breadcrumbHtml;
+                
+                // 为面包屑中的链接添加点击事件
+                breadcrumb.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const folderId = this.getAttribute('data-folder');
+                        if (folderId) {
+                            // 触发对应文件夹的点击事件
+                            const folderHeader = document.querySelector('.folder-header[data-folder="' + folderId + '"]');
+                            if (folderHeader) {
+                                folderHeader.click();
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
