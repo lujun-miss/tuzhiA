@@ -54,6 +54,9 @@
             .status-rejected {
                 @apply bg-danger/20 text-danger;
             }
+            .status-no-approval {
+                @apply bg-gray-100 text-gray-text;
+            }
             .folder-tree-item {
                 @apply flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300;
             }
@@ -252,22 +255,35 @@
                                         <td class="py-3 px-4 text-sm text-gray-text">2026-01-21</td>
                                         <td class="py-3 px-4">李工</td>
                                         <td class="py-3 px-4">
-                                            <span class="status-badge status-pending">待审批</span>
+                                            <span class="status-badge status-pending">待审核</span>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
+                                                <!-- 详情按钮：查看图纸详细信息 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
+                                                <!-- 修改按钮：修改图纸信息，修改后可重新提交审批 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <!-- 下载按钮：下载图纸文件 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
                                                 </button>
+                                                <!-- 复制按钮：复制图纸创建副本，副本状态为待审核 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <!-- 移动按钮：移动图纸到其他文件夹，状态保持不变 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
+                                                </button>
+                                                <!-- 审批按钮：打开审批模态框进行审批操作 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="审批">
                                                     <i class="fa fa-check-circle"></i>
                                                 </button>
+                                                <!-- 删除按钮：删除图纸 -->
                                                 <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
@@ -284,20 +300,32 @@
                                         <td class="py-3 px-4 text-sm text-gray-text">2026-01-20</td>
                                         <td class="py-3 px-4">王工</td>
                                         <td class="py-3 px-4">
-                                            <span class="status-badge status-approved">审批通过</span>
+                                            <span class="status-badge status-approved">审核通过</span>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
+                                                <!-- 详情按钮：查看图纸详细信息 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
+                                                <!-- 修改按钮：审核通过后不可用或需高级权限 -->
+                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或高级可用">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <!-- 下载按钮：下载图纸文件 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
                                                 </button>
-                                                <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
+                                                <!-- 复制按钮：复制图纸创建副本，副本状态为待审核 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <!-- 移动按钮：移动图纸到其他文件夹，状态保持不变 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
+                                                </button>
+                                                <!-- 删除按钮：审核通过后不可用或需高级权限 -->
+                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或需高级权限">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -313,22 +341,35 @@
                                         <td class="py-3 px-4 text-sm text-gray-text">2026-01-19</td>
                                         <td class="py-3 px-4">张工</td>
                                         <td class="py-3 px-4">
-                                            <span class="status-badge status-rejected">审批退回</span>
+                                            <span class="status-badge status-rejected">审核退回</span>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
+                                                <!-- 详情按钮：查看图纸详细信息 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
+                                                <!-- 修改按钮：修改图纸信息，修改后可重新提交审批 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <!-- 下载按钮：下载图纸文件 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
                                                 </button>
+                                                <!-- 复制按钮：复制图纸创建副本，副本状态为待审核 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <!-- 移动按钮：移动图纸到其他文件夹，状态保持不变 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
+                                                </button>
+                                                <!-- 审批按钮：打开审批模态框进行审批操作 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="审批">
                                                     <i class="fa fa-check-circle"></i>
                                                 </button>
+                                                <!-- 删除按钮：删除图纸 -->
                                                 <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
@@ -345,22 +386,35 @@
                                         <td class="py-3 px-4 text-sm text-gray-text">2026-01-18</td>
                                         <td class="py-3 px-4">刘工</td>
                                         <td class="py-3 px-4">
-                                            <span class="status-badge status-pending">待审批</span>
+                                            <span class="status-badge status-pending">待审核</span>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
+                                                <!-- 详情按钮：查看图纸详细信息 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
+                                                <!-- 修改按钮：修改图纸信息，修改后可重新提交审批 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <!-- 下载按钮：下载图纸文件 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
                                                 </button>
+                                                <!-- 复制按钮：复制图纸创建副本，副本状态为待审核 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <!-- 移动按钮：移动图纸到其他文件夹，状态保持不变 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
+                                                </button>
+                                                <!-- 审批按钮：打开审批模态框进行审批操作 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="审批">
                                                     <i class="fa fa-check-circle"></i>
                                                 </button>
+                                                <!-- 删除按钮：删除图纸 -->
                                                 <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
@@ -377,7 +431,42 @@
                                         <td class="py-3 px-4 text-sm text-gray-text">2026-01-17</td>
                                         <td class="py-3 px-4">李工</td>
                                         <td class="py-3 px-4">
-                                            <span class="status-badge status-approved">审批通过</span>
+                                            <span class="status-badge status-approved">审核通过</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或高级可用">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
+                                                    <i class="fa fa-download"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
+                                                </button>
+                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或需高级权限">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-light/50 transition-all-300">
+                                        <td class="py-3 px-4">
+                                            <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        </td>
+                                        <td class="py-3 px-4">固定文件夹</td>
+                                        <td class="py-3 px-4">TE-2026-006</td>
+                                        <td class="py-3 px-4">V1.0</td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-16</td>
+                                        <td class="py-3 px-4">赵工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-no-approval">无需审核</span>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
@@ -389,6 +478,12 @@
                                                 </button>
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
+                                                    <i class="fa fa-arrows-alt"></i>
                                                 </button>
                                                 <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
                                                     <i class="fa fa-trash"></i>
@@ -414,6 +509,46 @@
                                 <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
                                     <i class="fa fa-angle-right"></i>
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 操作说明备注 -->
+                    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                        <h3 class="font-semibold mb-3">操作说明</h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <h4 class="font-medium text-primary mb-1">复制操作说明</h4>
+                                <ul class="list-disc list-inside text-gray-text space-y-1">
+                                    <li>复制后的图纸：上传时间为当前时间，上传人员为执行复制操作的人员</li>
+                                    <li>复制后的图纸状态：无论原图纸状态如何，副本状态均为"待审核"</li>
+                                    <li>复制权限：所有状态的图纸均可复制</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-primary mb-1">移动操作说明</h4>
+                                <ul class="list-disc list-inside text-gray-text space-y-1">
+                                    <li>移动后的图纸：上传时间和上传人员保持不变，仍为原图纸的属性</li>
+                                    <li>移动后的图纸状态：保持原图纸的审批状态不变</li>
+                                    <li>移动权限：所有状态的图纸均可移动</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-primary mb-1">不同状态下的操作权限</h4>
+                                <ul class="list-disc list-inside text-gray-text space-y-1">
+                                    <li><strong>待审核</strong>：可查看、修改、下载、复制、移动、审批、删除</li>
+                                    <li><strong>审核通过</strong>：可查看、下载、复制、移动；修改和删除需高级权限</li>
+                                    <li><strong>审核退回</strong>：可查看、修改、下载、复制、移动、审批、删除</li>
+                                    <li><strong>无需审核</strong>：可查看、修改、下载、复制、移动、删除</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-primary mb-1">审核退回状态说明</h4>
+                                <ul class="list-disc list-inside text-gray-text space-y-1">
+                                    <li>审核退回的图纸需要修改后重新提交审批</li>
+                                    <li>审批人员可在退回时上传附件，标记需要修改的地方</li>
+                                    <li>退回的图纸会显示在审批记录中，包含审批意见和附件</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -497,6 +632,7 @@
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">操作时间</th>
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">审批状态</th>
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">审批意见</th>
+                                <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">修改意见</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -506,6 +642,28 @@
                                 <td class="py-2 px-4 text-sm">2026-01-21 10:30:00</td>
                                 <td class="py-2 px-4 text-sm"><span class="status-badge status-pending">待审批</span></td>
                                 <td class="py-2 px-4 text-sm">-</td>
+                                <td class="py-2 px-4 text-sm">
+                                    <div class="flex flex-col space-y-1">
+                                        <div class="flex items-center justify-between text-primary hover:text-primary/80">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-file-pdf-o mr-1"></i>
+                                                <span>错误标记1.pdf</span>
+                                            </div>
+                                            <button class="text-primary hover:text-primary/80 ml-2">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center justify-between text-primary hover:text-primary/80">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-file-image-o mr-1"></i>
+                                                <span>错误标记2.png</span>
+                                            </div>
+                                            <button class="text-primary hover:text-primary/80 ml-2">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -578,6 +736,7 @@
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">操作时间</th>
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">审批状态</th>
                                 <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">审批意见</th>
+                                <th class="text-left py-2 px-4 text-sm font-medium text-gray-text">修改意见</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -587,6 +746,28 @@
                                 <td class="py-2 px-4 text-sm">2026-01-21 10:30:00</td>
                                 <td class="py-2 px-4 text-sm"><span class="status-badge status-pending">待审批</span></td>
                                 <td class="py-2 px-4 text-sm">-</td>
+                                <td class="py-2 px-4 text-sm">
+                                    <div class="flex flex-col space-y-1">
+                                        <div class="flex items-center justify-between text-primary hover:text-primary/80">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-file-pdf-o mr-1"></i>
+                                                <span>错误标记1.pdf</span>
+                                            </div>
+                                            <button class="text-primary hover:text-primary/80 ml-2">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center justify-between text-primary hover:text-primary/80">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-file-image-o mr-1"></i>
+                                                <span>错误标记2.png</span>
+                                            </div>
+                                            <button class="text-primary hover:text-primary/80 ml-2">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -598,7 +779,7 @@
                     取消
                 </button>
                 <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
-                    保存
+                    保存并重新提交
                 </button>
             </div>
         </div>
@@ -672,9 +853,15 @@
                 </select>
             </div>
             
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-text mb-2">审批意见</label>
                 <textarea class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" rows="3" placeholder="请输入审批意见"></textarea>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-text mb-2">附件上传</label>
+                <input type="file" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" accept=".pdf,.jpg,.jpeg,.png,.dwg">
+                <p class="text-xs text-gray-text mt-1">用于上传标记图纸中需要修改的地方</p>
             </div>
             <div class="flex justify-end space-x-2">
                 <button id="cancel-audit-btn" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
@@ -687,6 +874,312 @@
         </div>
     </div>
     
+    <!-- 复制图纸模态框 -->
+    <div id="copy-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">复制图纸</h3>
+                <button id="close-copy-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-6 space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-sm text-gray-text">选择要复制到的文件夹：</p>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="select-all-folders" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                            <label for="select-all-folders" class="text-sm text-gray-text">全选</label>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-light rounded-md max-h-60 overflow-y-auto" id="folder-tree">
+                        <!-- 根目录 -->
+                        <div class="folder-item mb-2">
+                            <div class="folder-header flex items-center py-1">
+                                <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
+                                <span class="folder-name font-medium">根目录</span>
+                                <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                            </div>
+                            <div class="folder-children ml-6 mt-1">
+                                <!-- 固定文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">固定文件夹</span>
+                                        <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                </div>
+                                <!-- 其他文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">其他文件夹</span>
+                                        <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                </div>
+                                <!-- 审批文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">审批文件夹</span>
+                                        <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                    <div class="folder-children ml-6 mt-1">
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">装配图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">结构图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">电气图纸</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 设备文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">包装设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">烘干设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">烧结设备</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-text" id="selected-folders-count">
+                        已选择 <span id="selected-folders-number">0</span> 个文件夹
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-sm text-gray-text">图纸信息：</p>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="select-all-drawings" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                            <label for="select-all-drawings" class="text-sm text-gray-text">全选</label>
+                        </div>
+                    </div>
+                    <div class="mt-2 p-3 bg-light rounded-md max-h-60 overflow-y-auto" id="copy-drawing-list">
+                        <!-- 图纸列表 -->
+                        <div class="drawing-item flex items-center justify-between py-2 border-b border-gray-border">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" checked data-id="SM-2026-001">
+                                <div>
+                                    <p class="text-sm font-medium">SM-2026-001</p>
+                                    <p class="text-xs text-gray-text">版本：V1.0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawing-item flex items-center justify-between py-2 border-b border-gray-border">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-id="RM-2026-002">
+                                <div>
+                                    <p class="text-sm font-medium">RM-2026-002</p>
+                                    <p class="text-xs text-gray-text">版本：V2.1</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawing-item flex items-center justify-between py-2 border-b border-gray-border">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-id="CO-2026-003">
+                                <div>
+                                    <p class="text-sm font-medium">CO-2026-003</p>
+                                    <p class="text-xs text-gray-text">版本：V1.5</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawing-item flex items-center justify-between py-2 border-b border-gray-border">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-id="SI-2026-004">
+                                <div>
+                                    <p class="text-sm font-medium">SI-2026-004</p>
+                                    <p class="text-xs text-gray-text">版本：V3.0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawing-item flex items-center justify-between py-2 border-b border-gray-border last:border-b-0">
+                            <div class="flex items-center">
+                                <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-id="AX-2026-005">
+                                <div>
+                                    <p class="text-sm font-medium">AX-2026-005</p>
+                                    <p class="text-xs text-gray-text">版本：V1.2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-text" id="selected-count">
+                        已选择 <span id="selected-number">1</span> 个图纸
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancel-copy-btn" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    复制
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动图纸模态框 -->
+    <div id="move-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">移动图纸</h3>
+                <button id="close-move-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-6 space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-sm text-gray-text">选择目标文件夹：</p>
+                    </div>
+                    <div class="p-3 bg-light rounded-md max-h-60 overflow-y-auto" id="move-folder-tree">
+                        <!-- 根目录 -->
+                        <div class="folder-item mb-2">
+                            <div class="folder-header flex items-center py-1">
+                                <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
+                                <span class="folder-name font-medium">根目录</span>
+                                <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                            </div>
+                            <div class="folder-children ml-6 mt-1">
+                                <!-- 固定文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">固定文件夹</span>
+                                        <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                </div>
+                                <!-- 其他文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">其他文件夹</span>
+                                        <i class="fa fa-angle-right ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                </div>
+                                <!-- 审批文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">审批文件夹</span>
+                                        <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                    <div class="folder-children ml-6 mt-1">
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">装配图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">结构图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-1">
+                                            <div class="folder-header flex items-center py-1">
+                                                <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">电气图纸</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 设备文件夹 -->
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">包装设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">烘干设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-2">
+                                    <div class="folder-header flex items-center py-1">
+                                        <input type="radio" name="target-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                        <span class="folder-name">烧结设备</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-sm text-gray-text">图纸信息：</p>
+                    </div>
+                    <div class="mt-2 p-3 bg-light rounded-md">
+                        <div class="drawing-item flex items-center justify-between py-2">
+                            <div class="flex items-center">
+                                <div>
+                                    <p class="text-sm font-medium">SM-2026-001</p>
+                                    <p class="text-xs text-gray-text">版本：V1.0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancel-move-btn" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    移动
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 上传图纸模态框 -->
     <div id="upload-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
@@ -696,37 +1189,114 @@
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <div class="mb-6 space-y-4">
+            <div class="mb-3 space-y-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">所属文件夹</label>
-                    <select class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
-                        <option>固定文件夹</option>
-                        <option>包装设备</option>
-                        <option>烘干设备</option>
-                        <option>烧结设备</option>
-                        <option>审批文件夹</option>
-                    </select>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-sm font-medium text-gray-text">所属文件夹</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="select-all-upload-folders" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                            <label for="select-all-upload-folders" class="text-xs text-gray-text">全选</label>
+                        </div>
+                    </div>
+                    <div class="p-2 bg-light rounded-md max-h-32 overflow-y-auto" id="upload-folder-tree">
+                        <!-- 根目录 -->
+                        <div class="folder-item mb-1">
+                            <div class="folder-header flex items-center py-0.5">
+                                <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                <i class="fa fa-folder-open text-primary mr-1.5 folder-icon"></i>
+                                <span class="folder-name font-medium">根目录</span>
+                                <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                            </div>
+                            <div class="folder-children ml-6 mt-0.5">
+                                <!-- 固定文件夹 -->
+                                <div class="folder-item mb-1">
+                                    <div class="folder-header flex items-center py-0.5">
+                                        <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                        <span class="folder-name">固定文件夹</span>
+                                    </div>
+                                </div>
+                                <!-- 审批文件夹 -->
+                                <div class="folder-item mb-1">
+                                    <div class="folder-header flex items-center py-0.5">
+                                        <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                        <span class="folder-name">审批文件夹</span>
+                                        <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                    <div class="folder-children ml-6 mt-0.5">
+                                        <div class="folder-item mb-0.5">
+                                            <div class="folder-header flex items-center py-0.5">
+                                                <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                                <span class="folder-name">装配图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-0.5">
+                                            <div class="folder-header flex items-center py-0.5">
+                                                <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                                <span class="folder-name">结构图纸</span>
+                                            </div>
+                                        </div>
+                                        <div class="folder-item mb-0.5">
+                                            <div class="folder-header flex items-center py-0.5">
+                                                <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                                <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                                <span class="folder-name">电气图纸</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 设备文件夹 -->
+                                <div class="folder-item mb-1">
+                                    <div class="folder-header flex items-center py-0.5">
+                                        <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                        <span class="folder-name">包装设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-1">
+                                    <div class="folder-header flex items-center py-0.5">
+                                        <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                        <span class="folder-name">烘干设备</span>
+                                    </div>
+                                </div>
+                                <div class="folder-item mb-1">
+                                    <div class="folder-header flex items-center py-0.5">
+                                        <input type="checkbox" class="folder-checkbox w-3.5 h-3.5 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                                        <i class="fa fa-folder text-warning mr-1.5 folder-icon"></i>
+                                        <span class="folder-name">烧结设备</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-1 text-xs text-gray-text" id="selected-upload-folders-count">
+                        已选择 <span id="selected-upload-folders-number">0</span> 个文件夹
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">图纸编号</label>
-                    <input type="text" placeholder="请输入图纸编号" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    <label class="block text-xs font-medium text-gray-text mb-1">图纸编号</label>
+                    <input type="text" placeholder="请输入图纸编号" class="w-full border border-gray-border rounded-md px-2 py-1.5 focus:border-primary focus:outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">版本号</label>
-                    <input type="text" placeholder="请输入版本号" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                    <label class="block text-xs font-medium text-gray-text mb-1">版本号</label>
+                    <input type="text" placeholder="请输入版本号" class="w-full border border-gray-border rounded-md px-2 py-1.5 focus:border-primary focus:outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">图纸描述</label>
-                    <textarea class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" rows="3" placeholder="请输入图纸描述"></textarea>
+                    <label class="block text-xs font-medium text-gray-text mb-1">图纸描述</label>
+                    <textarea class="w-full border border-gray-border rounded-md px-2 py-1.5 focus:border-primary focus:outline-none text-sm" rows="1" placeholder="请输入图纸描述"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">上传文件</label>
-                    <div class="mt-2 border-2 border-dashed border-gray-border rounded-md p-6 text-center">
-                        <i class="fa fa-cloud-upload text-3xl text-gray-text mb-2"></i>
-                        <p class="text-sm text-gray-text mb-2">点击或拖拽文件到此处上传</p>
+                    <label class="block text-xs font-medium text-gray-text mb-1">上传文件</label>
+                    <div class="mt-1 border-2 border-dashed border-gray-border rounded-md p-2 text-center">
+                        <i class="fa fa-cloud-upload text-xl text-gray-text mb-1"></i>
+                        <p class="text-xs text-gray-text mb-0.5">点击或拖拽文件到此处上传</p>
                         <p class="text-xs text-gray-text">支持 PDF、DWG、DXF 格式，单个文件不超过 50MB</p>
                         <input type="file" class="hidden" id="file-upload">
-                        <button id="select-file-btn" class="mt-4 bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                        <button id="select-file-btn" class="mt-2 bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-3 py-1.5 rounded-md transition-all-300 text-sm">
                             选择文件
                         </button>
                     </div>
@@ -772,6 +1342,51 @@
                 });
             });
             
+            // 移动模态框
+            const moveButtons = document.querySelectorAll('[title="移动"]');
+            const moveModal = document.getElementById('move-modal');
+            const closeMoveModal = document.getElementById('close-move-modal');
+            const cancelMoveBtn = document.getElementById('cancel-move-btn');
+            
+            moveButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    moveModal.classList.remove('hidden');
+                });
+            });
+            
+            function hideMoveModal() {
+                moveModal.classList.add('hidden');
+            }
+            
+            closeMoveModal.addEventListener('click', hideMoveModal);
+            cancelMoveBtn.addEventListener('click', hideMoveModal);
+            moveModal.addEventListener('click', function(e) {
+                if (e.target === moveModal) {
+                    hideMoveModal();
+                }
+            });
+            
+            // 移动文件夹树展开/折叠
+            const moveFolderToggles = moveModal.querySelectorAll('.folder-toggle');
+            
+            moveFolderToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const folderItem = this.closest('.folder-item');
+                    const children = folderItem.querySelector('.folder-children');
+                    if (children) {
+                        children.classList.toggle('hidden');
+                        // 切换图标
+                        if (this.classList.contains('fa-angle-down')) {
+                            this.classList.remove('fa-angle-down');
+                            this.classList.add('fa-angle-right');
+                        } else {
+                            this.classList.remove('fa-angle-right');
+                            this.classList.add('fa-angle-down');
+                        }
+                    }
+                });
+            });
+            
             // 详情模态框
             const detailButtons = document.querySelectorAll('[title="详情"]');
             const detailModal = document.getElementById('detail-modal');
@@ -797,7 +1412,7 @@
             });
             
             // 编辑模态框
-            const editButtons = document.querySelectorAll('[title="编辑"]');
+            const editButtons = document.querySelectorAll('[title="修改"]');
             const editModal = document.getElementById('edit-modal');
             const closeEditModal = document.getElementById('close-edit-modal');
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
@@ -899,6 +1514,294 @@
                 });
             });
             
+            // 复制按钮点击事件
+            const copyButtons = document.querySelectorAll('[title="复制"]');
+            const copyModal = document.getElementById('copy-modal');
+            const closeCopyModal = document.getElementById('close-copy-modal');
+            const cancelCopyBtn = document.getElementById('cancel-copy-btn');
+            const copyDrawingList = document.getElementById('copy-drawing-list');
+            const selectAllCheckbox = document.getElementById('select-all-drawings');
+            const selectedNumber = document.getElementById('selected-number');
+            
+            // 存储当前要复制的图纸信息
+            let currentDrawings = [];
+            
+            // 单个复制按钮点击事件
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 获取图纸信息
+                    const row = this.closest('tr');
+                    const drawingNumber = row.querySelector('td:nth-child(3)').textContent;
+                    const drawingVersion = row.querySelector('td:nth-child(4)').textContent;
+                    const drawingId = row.dataset.id || drawingNumber; // 使用图纸编号作为临时ID
+                    
+                    // 重置当前图纸列表
+                    currentDrawings = [{
+                        id: drawingId,
+                        number: drawingNumber,
+                        version: drawingVersion
+                    }];
+                    
+                    // 更新模态框信息
+                    updateCopyModal();
+                    
+                    // 显示模态框
+                    copyModal.classList.remove('hidden');
+                });
+            });
+            
+            // 全选/取消全选功能
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    const checkboxes = copyDrawingList.querySelectorAll('.drawing-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                    updateSelectedCount();
+                });
+            }
+            
+            // 单个图纸复选框点击事件
+            copyModal.addEventListener('change', function(e) {
+                if (e.target.classList.contains('drawing-checkbox')) {
+                    updateSelectedCount();
+                    // 检查是否所有复选框都被选中
+                    const checkboxes = copyDrawingList.querySelectorAll('.drawing-checkbox');
+                    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = allChecked;
+                    }
+                }
+            });
+            
+            // 更新选中数量
+            function updateSelectedCount() {
+                const checkboxes = copyDrawingList.querySelectorAll('.drawing-checkbox');
+                const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                if (selectedNumber) {
+                    selectedNumber.textContent = checkedCount;
+                }
+            }
+            
+            // 更新复制模态框
+            function updateCopyModal() {
+                // 清空现有列表
+                copyDrawingList.innerHTML = '';
+                
+                // 生成图纸列表
+                currentDrawings.forEach(drawing => {
+                    const drawingItem = document.createElement('div');
+                    drawingItem.className = 'drawing-item flex items-center justify-between py-2 border-b border-gray-border last:border-b-0';
+                    drawingItem.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" class="drawing-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" checked data-id="${drawing.id}">
+                            <div>
+                                <p class="text-sm font-medium">${drawing.number}</p>
+                                <p class="text-xs text-gray-text">版本：${drawing.version}</p>
+                            </div>
+                        </div>
+                    `;
+                    copyDrawingList.appendChild(drawingItem);
+                });
+                
+                // 更新选中数量
+                updateSelectedCount();
+                
+                // 检查是否所有复选框都被选中
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = true;
+                }
+            }
+            
+            function hideCopyModal() {
+                copyModal.classList.add('hidden');
+                // 重置当前图纸列表
+                currentDrawings = [];
+            }
+            
+            if (closeCopyModal) {
+                closeCopyModal.addEventListener('click', hideCopyModal);
+            }
+            
+            if (cancelCopyBtn) {
+                cancelCopyBtn.addEventListener('click', hideCopyModal);
+            }
+            
+            if (copyModal) {
+                copyModal.addEventListener('click', function(e) {
+                    if (e.target === copyModal) {
+                        hideCopyModal();
+                    }
+                });
+            }
+            
+            // 文件夹树功能
+            function initFolderTree() {
+                const folderTree = document.getElementById('folder-tree');
+                const selectAllFolders = document.getElementById('select-all-folders');
+                const selectedFoldersNumber = document.getElementById('selected-folders-number');
+                
+                // 文件夹展开/折叠功能
+                folderTree.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('folder-toggle') || e.target.closest('.folder-header')) {
+                        const folderHeader = e.target.closest('.folder-header');
+                        if (folderHeader) {
+                            const folderItem = folderHeader.closest('.folder-item');
+                            const folderChildren = folderItem.querySelector('.folder-children');
+                            const folderToggle = folderHeader.querySelector('.folder-toggle');
+                            const folderIcon = folderHeader.querySelector('.folder-icon');
+                            
+                            if (folderChildren && folderToggle && folderIcon) {
+                                if (folderChildren.style.display === 'none') {
+                                    folderChildren.style.display = 'block';
+                                    folderToggle.classList.remove('fa-angle-right');
+                                    folderToggle.classList.add('fa-angle-down');
+                                    folderIcon.classList.remove('fa-folder');
+                                    folderIcon.classList.add('fa-folder-open');
+                                } else {
+                                    folderChildren.style.display = 'none';
+                                    folderToggle.classList.remove('fa-angle-down');
+                                    folderToggle.classList.add('fa-angle-right');
+                                    folderIcon.classList.remove('fa-folder-open');
+                                    folderIcon.classList.add('fa-folder');
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // 全选/取消全选文件夹
+                if (selectAllFolders) {
+                    selectAllFolders.addEventListener('change', function() {
+                        const checkboxes = folderTree.querySelectorAll('.folder-checkbox');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                        updateSelectedFoldersCount();
+                    });
+                }
+                
+                // 文件夹复选框点击事件
+                folderTree.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('folder-checkbox')) {
+                        const checkbox = e.target;
+                        const folderItem = checkbox.closest('.folder-item');
+                        
+                        // 处理子文件夹
+                        const childCheckboxes = folderItem.querySelectorAll('.folder-children .folder-checkbox');
+                        childCheckboxes.forEach(childCheckbox => {
+                            childCheckbox.checked = checkbox.checked;
+                        });
+                        
+                        // 处理父文件夹
+                        updateParentCheckbox(folderItem);
+                        
+                        // 更新选中数量
+                        updateSelectedFoldersCount();
+                    }
+                });
+                
+                // 更新父文件夹复选框状态
+                function updateParentCheckbox(folderItem) {
+                    const parentFolder = folderItem.parentElement.closest('.folder-item');
+                    if (parentFolder) {
+                        const parentCheckbox = parentFolder.querySelector('.folder-checkbox');
+                        const childCheckboxes = parentFolder.querySelectorAll('.folder-children .folder-checkbox');
+                        
+                        if (parentCheckbox && childCheckboxes.length > 0) {
+                            const checkedCount = Array.from(childCheckboxes).filter(cb => cb.checked).length;
+                            if (checkedCount === 0) {
+                                parentCheckbox.checked = false;
+                                parentCheckbox.indeterminate = false;
+                            } else if (checkedCount === childCheckboxes.length) {
+                                parentCheckbox.checked = true;
+                                parentCheckbox.indeterminate = false;
+                            } else {
+                                parentCheckbox.checked = false;
+                                parentCheckbox.indeterminate = true;
+                            }
+                            
+                            // 递归更新父文件夹
+                            updateParentCheckbox(parentFolder);
+                        }
+                    }
+                }
+                
+                // 更新选中文件夹数量
+                function updateSelectedFoldersCount() {
+                    const checkboxes = folderTree.querySelectorAll('.folder-checkbox:checked');
+                    const checkedCount = checkboxes.length;
+                    if (selectedFoldersNumber) {
+                        selectedFoldersNumber.textContent = checkedCount;
+                    }
+                    
+                    // 检查是否所有文件夹都被选中
+                    const allCheckboxes = folderTree.querySelectorAll('.folder-checkbox');
+                    if (selectAllFolders) {
+                        if (allCheckboxes.length === 0) {
+                            selectAllFolders.checked = false;
+                            selectAllFolders.indeterminate = false;
+                        } else if (checkedCount === 0) {
+                            selectAllFolders.checked = false;
+                            selectAllFolders.indeterminate = false;
+                        } else if (checkedCount === allCheckboxes.length) {
+                            selectAllFolders.checked = true;
+                            selectAllFolders.indeterminate = false;
+                        } else {
+                            selectAllFolders.checked = false;
+                            selectAllFolders.indeterminate = true;
+                        }
+                    }
+                }
+            }
+            
+            // 初始化文件夹树
+            initFolderTree();
+            
+            // 复制按钮点击事件
+            const copyActionButton = copyModal?.querySelector('button.bg-primary');
+            if (copyActionButton) {
+                copyActionButton.addEventListener('click', function() {
+                    // 获取选中的图纸
+                    const checkboxes = copyDrawingList.querySelectorAll('.drawing-checkbox:checked');
+                    const selectedDrawings = Array.from(checkboxes).map(cb => {
+                        const item = cb.closest('.drawing-item');
+                        const number = item.querySelector('.text-sm.font-medium').textContent;
+                        const version = item.querySelector('.text-xs.text-gray-text').textContent.replace('版本：', '');
+                        return {
+                            id: cb.dataset.id,
+                            number: number,
+                            version: version
+                        };
+                    });
+                    
+                    // 获取选中的文件夹
+                    const folderCheckboxes = document.getElementById('folder-tree').querySelectorAll('.folder-checkbox:checked');
+                    const selectedFolders = Array.from(folderCheckboxes).map(cb => {
+                        const folderHeader = cb.closest('.folder-header');
+                        const folderName = folderHeader.querySelector('.folder-name').textContent;
+                        return folderName;
+                    });
+                    
+                    if (selectedDrawings.length === 0) {
+                        alert('请至少选择一个图纸进行复制！');
+                        return;
+                    }
+                    
+                    if (selectedFolders.length === 0) {
+                        alert('请至少选择一个目标文件夹！');
+                        return;
+                    }
+                    
+                    // 模拟复制操作
+                    alert(`成功复制 ${selectedDrawings.length} 个图纸到 ${selectedFolders.length} 个文件夹！`);
+                    hideCopyModal();
+                });
+            }
+            
+            // 批量复制功能（可选：添加批量复制按钮）
+            // 这里可以添加批量复制按钮的点击事件处理
+            
             // 上传图纸模态框
             const uploadButton = document.querySelector('.bg-primary:has(.fa-upload)');
             const uploadModal = document.getElementById('upload-modal');
@@ -950,6 +1853,123 @@
                     }
                 });
             }
+            
+            // 上传模态框文件夹树功能
+            function initUploadFolderTree() {
+                const uploadFolderTree = document.getElementById('upload-folder-tree');
+                const selectAllUploadFolders = document.getElementById('select-all-upload-folders');
+                const selectedUploadFoldersNumber = document.getElementById('selected-upload-folders-number');
+                
+                if (!uploadFolderTree) return;
+                
+                // 文件夹展开/折叠
+                const uploadFolderToggles = uploadFolderTree.querySelectorAll('.folder-toggle');
+                uploadFolderToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const folderItem = this.closest('.folder-item');
+                        const folderChildren = folderItem.querySelector('.folder-children');
+                        if (folderChildren) {
+                            folderChildren.classList.toggle('hidden');
+                            
+                            // 切换图标
+                            if (this.classList.contains('fa-angle-down')) {
+                                this.classList.remove('fa-angle-down');
+                                this.classList.add('fa-angle-right');
+                            } else {
+                                this.classList.remove('fa-angle-right');
+                                this.classList.add('fa-angle-down');
+                            }
+                        }
+                    });
+                });
+                
+                // 全选功能
+                if (selectAllUploadFolders) {
+                    selectAllUploadFolders.addEventListener('change', function() {
+                        const checkboxes = uploadFolderTree.querySelectorAll('.folder-checkbox');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                        updateSelectedUploadFoldersCount();
+                    });
+                }
+                
+                // 文件夹复选框点击事件
+                uploadFolderTree.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('folder-checkbox')) {
+                        const checkbox = e.target;
+                        const folderItem = checkbox.closest('.folder-item');
+                        
+                        // 处理子文件夹
+                        const childCheckboxes = folderItem.querySelectorAll('.folder-children .folder-checkbox');
+                        childCheckboxes.forEach(childCheckbox => {
+                            childCheckbox.checked = checkbox.checked;
+                        });
+                        
+                        // 处理父文件夹
+                        updateUploadParentCheckbox(folderItem);
+                        
+                        // 更新选中数量
+                        updateSelectedUploadFoldersCount();
+                    }
+                });
+                
+                // 更新父文件夹复选框状态
+                function updateUploadParentCheckbox(folderItem) {
+                    const parentFolder = folderItem.parentElement.closest('.folder-item');
+                    if (parentFolder) {
+                        const parentCheckbox = parentFolder.querySelector('.folder-checkbox');
+                        const childCheckboxes = parentFolder.querySelectorAll('.folder-children .folder-checkbox');
+                        
+                        if (parentCheckbox && childCheckboxes.length > 0) {
+                            const checkedCount = Array.from(childCheckboxes).filter(cb => cb.checked).length;
+                            if (checkedCount === 0) {
+                                parentCheckbox.checked = false;
+                                parentCheckbox.indeterminate = false;
+                            } else if (checkedCount === childCheckboxes.length) {
+                                parentCheckbox.checked = true;
+                                parentCheckbox.indeterminate = false;
+                            } else {
+                                parentCheckbox.checked = false;
+                                parentCheckbox.indeterminate = true;
+                            }
+                            
+                            // 递归更新父文件夹
+                            updateUploadParentCheckbox(parentFolder);
+                        }
+                    }
+                }
+                
+                // 更新选中文件夹数量
+                function updateSelectedUploadFoldersCount() {
+                    const checkboxes = uploadFolderTree.querySelectorAll('.folder-checkbox:checked');
+                    const checkedCount = checkboxes.length;
+                    if (selectedUploadFoldersNumber) {
+                        selectedUploadFoldersNumber.textContent = checkedCount;
+                    }
+                    
+                    // 检查是否所有文件夹都被选中
+                    const allCheckboxes = uploadFolderTree.querySelectorAll('.folder-checkbox');
+                    if (selectAllUploadFolders) {
+                        if (allCheckboxes.length === 0) {
+                            selectAllUploadFolders.checked = false;
+                            selectAllUploadFolders.indeterminate = false;
+                        } else if (checkedCount === 0) {
+                            selectAllUploadFolders.checked = false;
+                            selectAllUploadFolders.indeterminate = false;
+                        } else if (checkedCount === allCheckboxes.length) {
+                            selectAllUploadFolders.checked = true;
+                            selectAllUploadFolders.indeterminate = false;
+                        } else {
+                            selectAllUploadFolders.checked = false;
+                            selectAllUploadFolders.indeterminate = true;
+                        }
+                    }
+                }
+            }
+            
+            // 初始化上传文件夹树
+            initUploadFolderTree();
         });
     </script>
 </body>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -97,6 +97,8 @@
                                 <option>下载</option>
                                 <option>审批</option>
                                 <option>删除</option>
+                                <option>复制</option>
+                                <option>移动</option>
                             </select>
                         </div>
                         <div>
@@ -162,13 +164,31 @@
                                         <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-light/50 transition-all-300">
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
                                     <td class="py-3 px-4 text-sm">2026-01-22 11:40:19</td>
                                     <td class="py-3 px-4">刘工</td>
                                     <td class="py-3 px-4">登录</td>
                                     <td class="py-3 px-4">系统登录</td>
                                     <td class="py-3 px-4">
                                         <span class="text-xs px-2 py-1 rounded-full status-inactive">失败</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 10:25:43</td>
+                                    <td class="py-3 px-4">李工</td>
+                                    <td class="py-3 px-4">复制</td>
+                                    <td class="py-3 px-4">SM-2026-001 复制到 固定文件夹</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-light/50 transition-all-300">
+                                    <td class="py-3 px-4 text-sm">2026-01-22 09:15:27</td>
+                                    <td class="py-3 px-4">王工</td>
+                                    <td class="py-3 px-4">移动</td>
+                                    <td class="py-3 px-4">RM-2026-002 从 其他文件夹 移动到 审批文件夹</td>
+                                    <td class="py-3 px-4">
+                                        <span class="text-xs px-2 py-1 rounded-full status-active">成功</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -178,7 +198,7 @@
                     <!-- 分页 -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between mt-6">
                         <div class="text-sm text-gray-text mb-4 md:mb-0">
-                            显示 1-5 条，共 56 条
+                            显示 1-7 条，共 58 条
                         </div>
                         <div class="flex items-center space-x-1">
                             <button class="w-8 h-8 flex items-center justify-center border border-gray-border rounded-md text-gray-text hover:border-primary hover:text-primary transition-all-300">
