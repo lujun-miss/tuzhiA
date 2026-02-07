@@ -59,9 +59,13 @@
             }
             .folder-tree-item {
                 @apply flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer transition-all-300;
+                user-select: none;
             }
             .folder-tree-item.active {
                 @apply bg-primary/10 text-primary;
+            }
+            .folder-name {
+                user-select: none;
             }
         }
     </style>
@@ -91,10 +95,46 @@
         <div class="w-64 bg-white border-r border-gray-border flex flex-col">
             <!-- 页面标题 -->
             <div class="p-4 border-b border-gray-border">
-                <h2 class="text-xl font-semibold">图纸管理</h2>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold">图纸管理</h2>
+                    <button id="new-folder-btn" class="text-primary hover:text-primary/80 transition-all-300" title="新建文件夹">
+                        <i class="fa fa-plus-circle text-lg"></i>
+                    </button>
+                </div>
                 <div class="text-sm text-gray-text mt-1">
                     <span>当前位置：</span>
                     <span class="text-primary">根目录</span>
+                </div>
+            </div>
+            
+            <!-- 右键菜单 -->
+            <div id="context-menu" class="fixed bg-white border border-gray-border rounded-md shadow-lg z-50 hidden">
+                <div class="py-1">
+                    <div class="context-menu-item px-4 py-2 hover:bg-light cursor-pointer transition-all-300" data-action="new-folder">
+                        <i class="fa fa-folder-plus mr-2"></i>
+                        <span>新建文件夹</span>
+                    </div>
+                    <div class="context-menu-item px-4 py-2 hover:bg-light cursor-pointer transition-all-300" data-action="rename">
+                        <i class="fa fa-edit mr-2"></i>
+                        <span>重命名</span>
+                    </div>
+                    <div class="context-menu-item px-4 py-2 hover:bg-light cursor-pointer transition-all-300" data-action="delete">
+                        <i class="fa fa-trash mr-2"></i>
+                        <span>删除</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 行内编辑框 -->
+            <div id="inline-editor" class="fixed bg-white border border-primary rounded-md shadow-lg z-50 hidden">
+                <input type="text" id="folder-name-input" class="w-48 px-3 py-2 border-none focus:outline-none">
+                <div class="flex justify-end space-x-2 p-2 border-t border-gray-border">
+                    <button id="cancel-edit-btn" class="text-gray-text hover:text-primary transition-all-300">
+                        取消
+                    </button>
+                    <button id="confirm-edit-btn" class="text-primary hover:text-primary/80 transition-all-300">
+                        确定
+                    </button>
                 </div>
             </div>
             
@@ -164,19 +204,28 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between">
                     <h3 class="font-semibold">根目录</h3>
                     <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
-                        <button id="open-upload-modal" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
-                            <i class="fa fa-upload mr-2"></i>
-                            <span>上传图纸</span>
-                        </button>
-                        <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
-                            <i class="fa fa-download mr-2"></i>
-                            <span>批量下载</span>
-                        </button>
-                        <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
-                            <i class="fa fa-trash mr-2"></i>
-                            <span>批量删除</span>
-                        </button>
-                    </div>
+                            <!-- 文件输入元素（隐藏） -->
+                            <input type="file" id="file-input" class="hidden" multiple>
+                            <input type="file" id="folder-input" class="hidden" webkitdirectory directory multiple>
+                            
+                            <!-- 上传按钮 -->
+                            <button id="upload-file-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
+                                <i class="fa fa-file-upload mr-2"></i>
+                                <span>上传文件</span>
+                            </button>
+                            <button id="upload-folder-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all-300">
+                                <i class="fa fa-folder-open mr-2"></i>
+                                <span>上传文件夹</span>
+                            </button>
+                            <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
+                                <i class="fa fa-download mr-2"></i>
+                                <span>批量下载</span>
+                            </button>
+                            <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md flex items-center transition-all-300">
+                                <i class="fa fa-trash mr-2"></i>
+                                <span>批量删除</span>
+                            </button>
+                        </div>
                 </div>
             </div>
             
@@ -187,114 +236,12 @@
                     <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
                         <h3 class="font-semibold mb-4">筛选条件</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-text mb-1">选择要上传的文件夹</label>
-                                <div class="relative">
-                                    <input type="text" id="filter-folder-search" placeholder="选择文件夹..." class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none pr-10 cursor-pointer" readonly>
-                                    <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-text"></i>
-                                    <div id="filter-folder-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-border rounded-md shadow-lg max-h-60 overflow-y-auto z-10 hidden">
-                                        <div class="p-2">
-                                            <!-- 全部选项 -->
-                                            <div class="folder-item">
-                                                <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                    <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="全部">
-                                                    <span class="folder-name">全部</span>
-                                                </div>
-                                            </div>
-                                            <!-- 根目录 -->
-                                            <div class="folder-item">
-                                                <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                    <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="根目录">
-                                                    <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
-                                                    <span class="folder-name">根目录</span>
-                                                    <i class="fa fa-angle-down ml-auto text-gray-text filter-folder-toggle"></i>
-                                                </div>
-                                                <div class="folder-children ml-6 mt-1">
-                                                    <!-- 固定文件夹 -->
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="固定文件夹">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">固定文件夹</span>
-                                                        </div>
-                                                    </div>
-                                                    <!-- 其他文件夹 -->
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="其他文件夹">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">其他文件夹</span>
-                                                        </div>
-                                                    </div>
-                                                    <!-- 审批文件夹 -->
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="审批文件夹">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">审批文件夹</span>
-                                                            <i class="fa fa-angle-down ml-auto text-gray-text filter-folder-toggle"></i>
-                                                        </div>
-                                                        <div class="folder-children ml-6 mt-1">
-                                                            <div class="folder-item">
-                                                                <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                                    <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="审批文件夹/装配图纸">
-                                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                                    <span class="folder-name">装配图纸</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="folder-item">
-                                                                <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                                    <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="审批文件夹/结构图纸">
-                                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                                    <span class="folder-name">结构图纸</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="folder-item">
-                                                                <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                                    <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="审批文件夹/电气图纸">
-                                                                    <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                                    <span class="folder-name">电气图纸</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- 设备文件夹 -->
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="包装设备">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">包装设备</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="烘干设备">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">烘干设备</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="folder-item">
-                                                        <div class="flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                                            <input type="checkbox" class="filter-folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="烧结设备">
-                                                            <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
-                                                            <span class="folder-name">烧结设备</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="selected-filter-folders" value="全部">
-                                </div>
+                                <label class="block text-sm font-medium text-gray-text mb-1">名称</label>
+                                <input type="text" placeholder="请输入名称" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-text mb-1">图纸名称</label>
-                                <input type="text" placeholder="请输入图纸名称" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-text mb-1">版本号</label>
-                                <input type="text" placeholder="请输入版本号" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
-                            </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-text mb-1">审批状态</label>
                                 <select class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
@@ -304,17 +251,27 @@
                                     <option>审批退回</option>
                                 </select>
                             </div>
+
+                            <div class="flex items-end space-x-2">
+                                <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                                    <i class="fa fa-refresh mr-1"></i>
+                                    <span>重置</span>
+                                </button>
+                                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
+                                    <i class="fa fa-search mr-1"></i>
+                                    <span>查询</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex justify-end mt-4 space-x-2">
-                            <button class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
-                                <i class="fa fa-refresh mr-1"></i>
-                                <span>重置</span>
-                            </button>
-                            <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
-                                <i class="fa fa-search mr-1"></i>
-                                <span>查询</span>
-                            </button>
-                        </div>
+                </div>
+                
+                <!-- 路径导航 -->
+                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <a href="#" class="text-primary hover:underline">根目录</a>
+                        <span class="text-gray-text">/</span>
+                        <span class="text-gray-text">固定文件夹</span>
+                    </div>
                 </div>
                 
                 <!-- 图纸列表 -->
@@ -326,9 +283,7 @@
                                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </th>
-                                        <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">所属文件夹</th>
-                                        <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">图纸名称</th>
-                                        <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">版本号</th>
+                                        <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">名称</th>
                                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">上传时间</th>
                                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">上传人员</th>
                                         <th class="text-left py-3 px-4 text-sm font-medium text-gray-text">审批状态</th>
@@ -336,18 +291,80 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- 文件夹示例 -->
                                     <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
                                         <td class="py-3 px-4">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </td>
-                                        <td class="py-3 px-4">根目录 &gt; 固定文件夹</td>
-                                    <td class="py-3 px-4">SM-2026-001</td>
-                                    <td class="py-3 px-4">V1.0</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-21</td>
-                                    <td class="py-3 px-4">李工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-pending">待审核</span>
-                                    </td>
+                                        <td class="py-3 px-4 font-medium">
+                                            <i class="fa fa-folder text-warning mr-2"></i>
+                                            <span>在建项目</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-01 00:00:00</td>
+                                        <td class="py-3 px-4">系统</td>
+                                        <td class="py-3 px-4">-</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <!-- 打开文件夹按钮 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="打开">
+                                                    <i class="fa fa-folder-open"></i>
+                                                </button>
+                                                <!-- 修改文件夹按钮 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <!-- 删除文件夹按钮 -->
+                                                <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- 文件夹示例 -->
+                                    <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                        <td class="py-3 px-4">
+                                            <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        </td>
+                                        <td class="py-3 px-4 font-medium">
+                                            <i class="fa fa-folder text-warning mr-2"></i>
+                                            <span>已完成项目</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-01 00:00:00</td>
+                                        <td class="py-3 px-4">系统</td>
+                                        <td class="py-3 px-4">-</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <!-- 打开文件夹按钮 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="打开">
+                                                    <i class="fa fa-folder-open"></i>
+                                                </button>
+                                                <!-- 修改文件夹按钮 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <!-- 删除文件夹按钮 -->
+                                                <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- 文件示例 -->
+                                    <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
+                                        <td class="py-3 px-4">
+                                            <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <i class="fa fa-file text-primary mr-2"></i>
+                                            <span>手动蝶阀 DN300.dwg</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-21 14:30:00</td>
+                                        <td class="py-3 px-4">李工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-pending">待审核</span>
+                                        </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
                                                 <!-- 详情按钮：查看图纸详细信息 -->
@@ -385,14 +402,15 @@
                                         <td class="py-3 px-4">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </td>
-                                        <td class="py-3 px-4">根目录 &gt; 其他文件夹</td>
-                                    <td class="py-3 px-4">RM-2026-002</td>
-                                    <td class="py-3 px-4">V2.1</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-20</td>
-                                    <td class="py-3 px-4">王工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-approved">审核通过</span>
-                                    </td>
+                                        <td class="py-3 px-4">
+                                            <i class="fa fa-file text-primary mr-2"></i>
+                                            <span>手动蝶阀 DN400.dwg</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-20 10:15:30</td>
+                                        <td class="py-3 px-4">王工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-approved">审核通过</span>
+                                        </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
                                                 <!-- 详情按钮：查看图纸详细信息 -->
@@ -426,14 +444,15 @@
                                         <td class="py-3 px-4">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </td>
-                                        <td class="py-3 px-4">根目录 &gt; 其他文件夹</td>
-                                    <td class="py-3 px-4">CO-2026-003</td>
-                                    <td class="py-3 px-4">V1.5</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-19</td>
-                                    <td class="py-3 px-4">张工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-rejected">审核退回</span>
-                                    </td>
+                                        <td class="py-3 px-4">
+                                            <i class="fa fa-file text-primary mr-2"></i>
+                                            <span>生产设备加工清单.docx</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-19 09:45:12</td>
+                                        <td class="py-3 px-4">张工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-rejected">审核退回</span>
+                                        </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
                                                 <!-- 详情按钮：查看图纸详细信息 -->
@@ -471,14 +490,15 @@
                                         <td class="py-3 px-4">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </td>
-                                        <td class="py-3 px-4">根目录 &gt; 其他文件夹</td>
-                                    <td class="py-3 px-4">SI-2026-004</td>
-                                    <td class="py-3 px-4">V3.0</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-18</td>
-                                    <td class="py-3 px-4">刘工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-pending">待审核</span>
-                                    </td>
+                                        <td class="py-3 px-4">
+                                            <i class="fa fa-file text-primary mr-2"></i>
+                                            <span>设备安装说明书.pdf</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-18 16:20:45</td>
+                                        <td class="py-3 px-4">刘工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-pending">待审核</span>
+                                        </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
                                                 <!-- 详情按钮：查看图纸详细信息 -->
@@ -512,70 +532,47 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <!-- 额外的生产设备加工清单文件 -->
                                     <tr class="border-b border-gray-border hover:bg-light/50 transition-all-300">
                                         <td class="py-3 px-4">
                                             <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                         </td>
-                                        <td class="py-3 px-4">根目录 &gt; 审批文件夹</td>
-                                    <td class="py-3 px-4">AX-2026-005</td>
-                                    <td class="py-3 px-4">V1.2</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-17</td>
-                                    <td class="py-3 px-4">李工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-approved">审核通过</span>
-                                    </td>
+                                        <td class="py-3 px-4">
+                                            <i class="fa fa-file text-primary mr-2"></i>
+                                            <span>生产设备加工清单.docx</span>
+                                        </td>
+                                        <td class="py-3 px-4 text-sm text-gray-text">2026-01-17 11:30:25</td>
+                                        <td class="py-3 px-4">赵工</td>
+                                        <td class="py-3 px-4">
+                                            <span class="status-badge status-pending">待审核</span>
+                                        </td>
                                         <td class="py-3 px-4">
                                             <div class="flex space-x-2">
+                                                <!-- 详情按钮：查看图纸详细信息 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或高级可用">
-                                                    <i class="fa fa-edit"></i>
-                                                </button>
-                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
-                                                    <i class="fa fa-download"></i>
-                                                </button>
-                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
-                                                    <i class="fa fa-copy"></i>
-                                                </button>
-                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
-                                                    <i class="fa fa-arrows-alt"></i>
-                                                </button>
-                                                <button class="text-gray-text cursor-not-allowed opacity-50" title="不可用或需高级权限">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-light/50 transition-all-300">
-                                        <td class="py-3 px-4">
-                                            <input type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
-                                        </td>
-                                        <td class="py-3 px-4">根目录 &gt; 固定文件夹</td>
-                                    <td class="py-3 px-4">TE-2026-006</td>
-                                    <td class="py-3 px-4">V1.0</td>
-                                    <td class="py-3 px-4 text-sm text-gray-text">2026-01-16</td>
-                                    <td class="py-3 px-4">赵工</td>
-                                    <td class="py-3 px-4">
-                                        <span class="status-badge status-no-approval">无需审核</span>
-                                    </td>
-                                        <td class="py-3 px-4">
-                                            <div class="flex space-x-2">
-                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="详情">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
+                                                <!-- 修改按钮：修改图纸信息，修改后可重新提交审批 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="修改">
                                                     <i class="fa fa-edit"></i>
                                                 </button>
+                                                <!-- 下载按钮：下载图纸文件 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="下载">
                                                     <i class="fa fa-download"></i>
                                                 </button>
+                                                <!-- 复制按钮：复制图纸创建副本，副本状态为待审核 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="复制">
                                                     <i class="fa fa-copy"></i>
                                                 </button>
+                                                <!-- 移动按钮：移动图纸到其他文件夹，状态保持不变 -->
                                                 <button class="text-primary hover:text-primary/80 transition-all-300" title="移动">
                                                     <i class="fa fa-arrows-alt"></i>
                                                 </button>
+                                                <!-- 审批按钮：打开审批模态框进行审批操作 -->
+                                                <button class="text-primary hover:text-primary/80 transition-all-300" title="审批">
+                                                    <i class="fa fa-check-circle"></i>
+                                                </button>
+                                                <!-- 删除按钮：删除图纸 -->
                                                 <button class="text-gray-text hover:text-danger transition-all-300" title="删除">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
@@ -673,7 +670,7 @@
                         <p class="font-medium">固定文件夹</p>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-text">图纸名称</p>
+                        <p class="text-sm text-gray-text">名称</p>
                         <p class="font-medium">SM-2026-001</p>
                     </div>
                     <div>
@@ -798,29 +795,9 @@
                     </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-text mb-1">图纸名称</label>
+                        <label class="block text-sm font-medium text-gray-text mb-1">名称</label>
                         <input type="text" value="SM-2026-001" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-text mb-1">版本号</label>
-                        <input type="text" value="V1.0" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-text mb-1">审批状态</label>
-                        <select class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none bg-gray-50 cursor-not-allowed" disabled>
-                            <option>待审批</option>
-                            <option>审批通过</option>
-                            <option>审批退回</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">图纸描述</label>
-                    <textarea class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" rows="3">高温设备结构图纸，包含详细的设计参数和安装说明。</textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-text mb-1">上传新附件</label>
-                    <input type="file" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
                 </div>
             </div>
             
@@ -914,6 +891,230 @@
         </div>
     </div>
 
+    <!-- 新建文件夹模态框 -->
+    <div id="new-folder-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">新建文件夹</h3>
+                <button id="close-new-folder-modal" class="text-gray-text hover:text-danger transition-all-300">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-text mb-1">所属文件夹</label>
+                    <div class="relative">
+                        <input type="text" id="parent-folder-name" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none pr-10 cursor-pointer" placeholder="请选择所属文件夹">
+                        <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-text"></i>
+                        <div id="parent-folder-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-border rounded-md shadow-lg max-h-60 overflow-y-auto z-10 hidden">
+                            <!-- 搜索框 -->
+                            <div class="p-2 border-b border-gray-border">
+                                <input type="text" id="parent-folder-search" placeholder="搜索文件夹..." class="w-full border border-gray-border rounded-md px-3 py-1.5 focus:border-primary focus:outline-none">
+                            </div>
+                            <!-- 多级文件夹树 -->
+                            <div class="p-2" id="parent-folder-tree">
+                                <!-- 根目录 -->
+                                <div class="folder-item">
+                                    <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                        <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="root">
+                                        <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
+                                        <span class="folder-name">根目录</span>
+                                        <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                    </div>
+                                    <div class="folder-children ml-6 mt-1">
+                                        <!-- 固定文件夹 -->
+                                        <div class="folder-item">
+                                            <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="fixed">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">固定文件夹</span>
+                                            </div>
+                                        </div>
+                                        <!-- 其他文件夹 -->
+                                        <div class="folder-item">
+                                            <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="other">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">其他文件夹</span>
+                                            </div>
+                                        </div>
+                                        <!-- 审批文件夹 -->
+                                        <div class="folder-item">
+                                            <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="approval">
+                                                <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                <span class="folder-name">审批文件夹</span>
+                                                <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
+                                            </div>
+                                            <div class="folder-children ml-6 mt-1">
+                                                <div class="folder-item">
+                                                    <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                        <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="approval/assembly">
+                                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                        <span class="folder-name">装配图纸</span>
+                                                    </div>
+                                                </div>
+                                                <div class="folder-item">
+                                                    <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                        <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="approval/structure">
+                                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                        <span class="folder-name">结构图纸</span>
+                                                    </div>
+                                                </div>
+                                                <div class="folder-item">
+                                                    <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
+                                                        <input type="radio" name="parent-folder" class="folder-radio w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="approval/electrical">
+                                                        <i class="fa fa-folder text-warning mr-2 folder-icon"></i>
+                                                        <span class="folder-name">电气图纸</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="parent-folder-id" value="">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-text mb-1">文件夹名称</label>
+                    <input type="text" id="new-folder-name" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" placeholder="请输入文件夹名称">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="require-approval" class="w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2">
+                    <label for="require-approval" class="text-sm text-gray-text">上传至此文件夹的图纸需要审批</label>
+                </div>
+                <div class="text-xs text-red-500 ml-6">若勾选，则上传图纸时选择此文件夹，代表需要审核</div>
+                
+                <!-- 权限设置 -->
+                <div class="border-t border-gray-border pt-4">
+                    <h4 class="text-sm font-medium mb-3">权限设置</h4>
+                    
+                    <!-- 1. 权限对象选择（用户/角色） -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-text mb-1">权限设置对象</label>
+                        <div class="flex space-x-2">
+                            <button id="role-tab" class="flex-1 py-2 px-4 border border-gray-border rounded-l-md bg-primary text-white">
+                                按角色设置
+                            </button>
+                            <button id="user-tab" class="flex-1 py-2 px-4 border border-gray-border rounded-r-md bg-white text-gray-text">
+                                按用户设置
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 2. 角色选择器 -->
+                    <div id="role-selector" class="mb-4 block">
+                        <label class="block text-sm font-medium text-gray-text mb-1">选择角色</label>
+                        <select id="role-dropdown" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
+                            <option value="admin">管理员</option>
+                            <option value="manager">部门经理</option>
+                            <option value="engineer">工程师</option>
+                            <option value="user">普通用户</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 3. 用户选择器（默认隐藏） -->
+                    <div id="user-selector" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-text mb-1">选择用户</label>
+                        <div class="relative">
+                            <input type="text" id="user-search" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" placeholder="搜索用户...">
+                            <div id="user-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-border rounded-md shadow-lg max-h-60 overflow-y-auto hidden">
+                                <!-- 示例用户列表 -->
+                                <div class="user-item p-2 hover:bg-gray-bg cursor-pointer">
+                                    <input type="checkbox" class="user-checkbox mr-2" value="user1">
+                                    <span>张三</span>
+                                </div>
+                                <div class="user-item p-2 hover:bg-gray-bg cursor-pointer">
+                                    <input type="checkbox" class="user-checkbox mr-2" value="user2">
+                                    <span>李四</span>
+                                </div>
+                                <div class="user-item p-2 hover:bg-gray-bg cursor-pointer">
+                                    <input type="checkbox" class="user-checkbox mr-2" value="user3">
+                                    <span>王五</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 已选用户列表 -->
+                        <div id="selected-users" class="mt-2 flex flex-wrap gap-2">
+                            <!-- 动态生成已选用户标签 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 4. 操作项权限矩阵 -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-text mb-1">操作权限设置</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <!-- 查看权限组 -->
+                            <div class="border border-gray-border rounded-md p-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="permission-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-permission="view">
+                                    <label class="text-sm font-medium">查看权限</label>
+                                </div>
+                            </div>
+                            
+                            <!-- 上传权限组 -->
+                            <div class="border border-gray-border rounded-md p-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="permission-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-permission="upload">
+                                    <label class="text-sm font-medium">上传权限</label>
+                                </div>
+                            </div>
+                            
+                            <!-- 删除权限组 -->
+                            <div class="border border-gray-border rounded-md p-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="permission-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-permission="delete">
+                                    <label class="text-sm font-medium">删除权限</label>
+                                </div>
+                            </div>
+                            
+                            <!-- 审批权限组 -->
+                            <div class="border border-gray-border rounded-md p-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="permission-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-permission="approve">
+                                    <label class="text-sm font-medium">审批权限</label>
+                                </div>
+                            </div>
+                            
+                            <!-- 下载权限组 -->
+                            <div class="border border-gray-border rounded-md p-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="permission-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" data-permission="download">
+                                    <label class="text-sm font-medium">下载权限</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 5. 权限优先级说明 -->
+                    <div class="text-xs text-gray-text mt-4 mb-4">
+                        <p>权限优先级：文件夹所有者 > 用户级权限 > 角色级权限</p>
+                        <p>当用户级权限与角色级权限冲突时，以用户级权限为准</p>
+                    </div>
+                    
+
+                    
+                    <!-- 7. 操作按钮 -->
+                    <div class="flex justify-end space-x-2">
+                        <button id="reset-permissions" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancel-new-folder-btn" class="bg-white border border-gray-border hover:border-primary text-gray-text hover:text-primary px-4 py-2 rounded-md transition-all-300">
+                    取消
+                </button>
+                <button id="confirm-new-folder-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-all-300">
+                    确认
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 审批对话框 -->
     <div id="audit-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
@@ -925,7 +1126,7 @@
             </div>
             <div class="mb-4">
                 <p class="text-sm mb-2">所属文件夹：固定文件夹</p>
-                <p class="text-sm mb-2">图纸名称：SM-2026-001</p>
+                <p class="text-sm mb-2">名称：SM-2026-001</p>
                 <p class="text-sm mb-2">版本号：V1.0</p>
                 <p class="text-sm">提交人员：李工</p>
             </div>
@@ -1294,7 +1495,7 @@
                                     <!-- 根目录 -->
                                     <div class="folder-item">
                                         <div class="folder-header flex items-center py-1.5 px-2 rounded-md hover:bg-light cursor-pointer">
-                                            <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="根目录">
+                                            <input type="checkbox" class="folder-checkbox w-4 h-4 text-primary focus:ring-primary border-gray-border rounded mr-2" value="根目录" id="root-folder-checkbox">
                                             <i class="fa fa-folder-open text-primary mr-2 folder-icon"></i>
                                             <span class="folder-name">根目录</span>
                                             <i class="fa fa-angle-down ml-auto text-gray-text folder-toggle"></i>
@@ -1378,8 +1579,8 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <label class="block text-sm font-medium text-gray-text mb-1">图纸名称</label>
-                        <input type="text" id="drawing-name" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" placeholder="请输入图纸名称">
+                        <label class="block text-sm font-medium text-gray-text mb-1">名称</label>
+                        <input type="text" id="drawing-name" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none" placeholder="请输入名称">
                     </div>
                     <div class="flex-1">
                         <label class="block text-sm font-medium text-gray-text mb-1">版本号</label>
@@ -1432,6 +1633,426 @@
     <script>
         // 模态框操作
         document.addEventListener('DOMContentLoaded', function() {
+            // 右键菜单功能
+            const contextMenu = document.getElementById('context-menu');
+            const folderTreeItems = document.querySelectorAll('.folder-tree-item');
+            const newFolderBtn = document.getElementById('new-folder-btn');
+            const inlineEditor = document.getElementById('inline-editor');
+            const folderNameInput = document.getElementById('folder-name-input');
+            const confirmEditBtn = document.getElementById('confirm-edit-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            
+            let selectedFolderItem = null;
+            
+            // 显示右键菜单
+            function showContextMenu(e, folderItem) {
+                e.preventDefault();
+                selectedFolderItem = folderItem;
+                
+                const rect = folderItem.getBoundingClientRect();
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY}px`;
+                contextMenu.classList.remove('hidden');
+            }
+            
+            // 隐藏右键菜单
+            function hideContextMenu() {
+                contextMenu.classList.add('hidden');
+                selectedFolderItem = null;
+            }
+            
+            // 为文件夹项添加右键菜单事件
+            folderTreeItems.forEach(item => {
+                item.addEventListener('contextmenu', function(e) {
+                    showContextMenu(e, this);
+                });
+            });
+            
+            // 点击页面其他地方隐藏右键菜单
+            document.addEventListener('click', function() {
+                hideContextMenu();
+                hideInlineEditor();
+            });
+            
+            // 右键菜单选项点击事件
+            document.querySelectorAll('.context-menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    
+                    if (selectedFolderItem) {
+                        switch (action) {
+                            case 'new-folder':
+                                showNewFolderModal(selectedFolderItem);
+                                break;
+                            case 'rename':
+                                showRenameEditor(selectedFolderItem);
+                                break;
+                            case 'delete':
+                                deleteFolder(selectedFolderItem);
+                                break;
+                        }
+                    }
+                    
+                    hideContextMenu();
+                });
+            });
+            
+            // 顶部新建按钮点击事件
+            if (newFolderBtn) {
+                newFolderBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // 获取当前选中的文件夹
+                    const activeFolder = document.querySelector('.folder-tree-item.active') || folderTreeItems[0];
+                    showNewFolderModal(activeFolder);
+                });
+            }
+            
+            // 新建文件夹模态框事件
+            const newFolderModal = document.getElementById('new-folder-modal');
+            const closeNewFolderModal = document.getElementById('close-new-folder-modal');
+            const cancelNewFolderBtn = document.getElementById('cancel-new-folder-btn');
+            const confirmNewFolderBtn = document.getElementById('confirm-new-folder-btn');
+            
+            // 所属文件夹选择
+            const parentFolderName = document.getElementById('parent-folder-name');
+            const parentFolderDropdown = document.getElementById('parent-folder-dropdown');
+            const parentFolderTree = document.getElementById('parent-folder-tree');
+            const parentFolderRadio = document.querySelectorAll('input[name="parent-folder"]');
+            const parentFolderId = document.getElementById('parent-folder-id');
+            
+            // 点击所属文件夹输入框，显示/隐藏下拉菜单
+            if (parentFolderName) {
+                parentFolderName.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    parentFolderDropdown.classList.toggle('hidden');
+                });
+            }
+            
+            // 点击页面其他地方，关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#parent-folder-name') && !e.target.closest('#parent-folder-dropdown')) {
+                    parentFolderDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 文件夹选择事件
+            parentFolderRadio.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const folderName = this.closest('.folder-header').querySelector('.folder-name').textContent;
+                        parentFolderName.value = folderName;
+                        parentFolderId.value = this.value;
+                        parentFolderDropdown.classList.add('hidden');
+                        
+                        // 更新selectedFolderItem
+                        const folderItems = document.querySelectorAll('.folder-tree-item');
+                        folderItems.forEach(item => {
+                            if (item.querySelector('span').textContent === folderName) {
+                                selectedFolderItem = item;
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 文件夹展开/折叠功能
+            const parentFolderToggles = document.querySelectorAll('#parent-folder-tree .folder-toggle');
+            parentFolderToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const folderHeader = this.closest('.folder-header');
+                    const folderChildren = folderHeader.nextElementSibling;
+                    const folderIcon = folderHeader.querySelector('.folder-icon');
+                    
+                    if (folderChildren) {
+                        folderChildren.classList.toggle('hidden');
+                        if (folderChildren.classList.contains('hidden')) {
+                            this.classList.remove('fa-angle-down');
+                            this.classList.add('fa-angle-right');
+                            folderIcon.classList.remove('fa-folder-open');
+                            folderIcon.classList.add('fa-folder');
+                        } else {
+                            this.classList.remove('fa-angle-right');
+                            this.classList.add('fa-angle-down');
+                            folderIcon.classList.remove('fa-folder');
+                            folderIcon.classList.add('fa-folder-open');
+                            folderIcon.classList.add('text-primary');
+                        }
+                    }
+                });
+            });
+            
+            // 权限设置交互
+            const uploadPermission = document.getElementById('upload-permission');
+            const specificUploadRoles = document.getElementById('specific-upload-roles');
+            const operationPermission = document.getElementById('operation-permission');
+            const specificOperationRoles = document.getElementById('specific-operation-roles');
+            
+            // 上传权限选择
+            if (uploadPermission) {
+                uploadPermission.addEventListener('change', function() {
+                    if (this.value === 'specific') {
+                        specificUploadRoles.classList.remove('hidden');
+                    } else {
+                        specificUploadRoles.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // 操作权限选择
+            if (operationPermission) {
+                operationPermission.addEventListener('change', function() {
+                    if (this.value === 'specific') {
+                        specificOperationRoles.classList.remove('hidden');
+                    } else {
+                        specificOperationRoles.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // 关闭模态框
+            if (closeNewFolderModal) {
+                closeNewFolderModal.addEventListener('click', function() {
+                    newFolderModal.classList.add('hidden');
+                });
+            }
+            
+            if (cancelNewFolderBtn) {
+                cancelNewFolderBtn.addEventListener('click', function() {
+                    newFolderModal.classList.add('hidden');
+                });
+            }
+            
+            // 确认创建文件夹
+            if (confirmNewFolderBtn) {
+                confirmNewFolderBtn.addEventListener('click', function() {
+                    const folderName = document.getElementById('new-folder-name').value.trim();
+                    const requireApproval = document.getElementById('require-approval').checked;
+                    const approver = document.getElementById('approver').value;
+                    const uploadPermission = document.getElementById('upload-permission').value;
+                    const operationPermission = document.getElementById('operation-permission').value;
+                    
+                    // 获取指定角色
+                    const uploadRoles = [];
+                    if (uploadPermission === 'specific') {
+                        document.querySelectorAll('#specific-upload-roles input:checked').forEach(checkbox => {
+                            uploadRoles.push(checkbox.value);
+                        });
+                    }
+                    
+                    const operationRoles = [];
+                    if (operationPermission === 'specific') {
+                        document.querySelectorAll('#specific-operation-roles input:checked').forEach(checkbox => {
+                            operationRoles.push(checkbox.value);
+                        });
+                    }
+                    
+                    if (folderName && selectedFolderItem) {
+                        createNewFolder(selectedFolderItem, folderName, requireApproval, approver, uploadPermission, uploadRoles, operationPermission, operationRoles);
+                        newFolderModal.classList.add('hidden');
+                    } else {
+                        alert('请输入文件夹名称');
+                    }
+                });
+            }
+            
+            // 显示新建文件夹模态框
+            function showNewFolderModal(folderItem) {
+                selectedFolderItem = folderItem;
+                
+                // 获取父文件夹名称
+                const folderName = folderItem.querySelector('span').textContent;
+                
+                // 重置表单
+                document.getElementById('parent-folder-name').value = folderName;
+                document.getElementById('new-folder-name').value = '';
+                document.getElementById('require-approval').checked = false;
+                
+                // 选中对应的单选按钮
+                const parentFolderRadio = document.querySelectorAll('input[name="parent-folder"]');
+                parentFolderRadio.forEach(radio => {
+                    const radioFolderName = radio.closest('.folder-header').querySelector('.folder-name').textContent;
+                    if (radioFolderName === folderName) {
+                        radio.checked = true;
+                        document.getElementById('parent-folder-id').value = radio.value;
+                    } else {
+                        radio.checked = false;
+                    }
+                });
+                
+                // 显示模态框
+                document.getElementById('new-folder-modal').classList.remove('hidden');
+                document.getElementById('new-folder-name').focus();
+            }
+            
+            // 显示重命名编辑框
+            function showRenameEditor(folderItem) {
+                selectedFolderItem = folderItem;
+                
+                const rect = folderItem.getBoundingClientRect();
+                inlineEditor.style.left = `${rect.left}px`;
+                inlineEditor.style.top = `${rect.bottom + 5}px`;
+                
+                const folderName = folderItem.querySelector('span').textContent;
+                folderNameInput.value = folderName;
+                folderNameInput.dataset.action = 'rename';
+                
+                inlineEditor.classList.remove('hidden');
+                folderNameInput.focus();
+            }
+            
+            // 隐藏行内编辑框
+            function hideInlineEditor() {
+                inlineEditor.classList.add('hidden');
+                selectedFolderItem = null;
+            }
+            
+            // 取消编辑
+            if (cancelEditBtn) {
+                cancelEditBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    hideInlineEditor();
+                });
+            }
+            
+            // 确认编辑
+            if (confirmEditBtn) {
+                confirmEditBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const folderName = folderNameInput.value.trim();
+                    const action = folderNameInput.dataset.action;
+                    
+                    if (folderName && selectedFolderItem) {
+                        if (action === 'new') {
+                            createNewFolder(selectedFolderItem, folderName);
+                        } else if (action === 'rename') {
+                            renameFolder(selectedFolderItem, folderName);
+                        }
+                    }
+                    
+                    hideInlineEditor();
+                });
+            }
+            
+            // 按Enter键确认编辑
+            if (folderNameInput) {
+                folderNameInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const folderName = this.value.trim();
+                        const action = this.dataset.action;
+                        
+                        if (folderName && selectedFolderItem) {
+                            if (action === 'new') {
+                                createNewFolder(selectedFolderItem, folderName);
+                            } else if (action === 'rename') {
+                                renameFolder(selectedFolderItem, folderName);
+                            }
+                        }
+                        
+                        hideInlineEditor();
+                    }
+                });
+            }
+            
+            // 创建新文件夹
+            function createNewFolder(parentFolder, folderName, requireApproval, approver, uploadPermission, uploadRoles, operationPermission, operationRoles) {
+                // 获取父文件夹的子文件夹容器
+                let childrenContainer = parentFolder.nextElementSibling;
+                if (!childrenContainer || !childrenContainer.classList.contains('ml-6')) {
+                    // 如果没有子文件夹容器，创建一个
+                    childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'ml-6 pl-2';
+                    parentFolder.parentNode.insertBefore(childrenContainer, parentFolder.nextSibling);
+                }
+                
+                // 创建新文件夹项
+                const newFolderItem = document.createElement('div');
+                newFolderItem.className = 'folder-tree-item';
+                newFolderItem.dataset.folderId = 'new-' + Date.now();
+                newFolderItem.dataset.requireApproval = requireApproval;
+                newFolderItem.dataset.approver = approver;
+                newFolderItem.dataset.uploadPermission = uploadPermission;
+                newFolderItem.dataset.uploadRoles = uploadRoles.join(',');
+                newFolderItem.dataset.operationPermission = operationPermission;
+                newFolderItem.dataset.operationRoles = operationRoles.join(',');
+                
+                newFolderItem.innerHTML = `
+                    <i class="fa fa-folder text-warning mr-2"></i>
+                    <span>${folderName}</span>
+                    ${requireApproval ? '<i class="fa fa-check-circle text-success ml-2"></i>' : ''}
+                    <i class="fa fa-angle-right ml-auto text-gray-text"></i>
+                `;
+                
+                // 添加右键菜单事件
+                newFolderItem.addEventListener('contextmenu', function(e) {
+                    showContextMenu(e, this);
+                });
+                
+                // 添加点击事件（展开/折叠）
+                newFolderItem.addEventListener('click', function() {
+                    // 切换激活状态
+                    document.querySelectorAll('.folder-tree-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+                
+                // 添加到子文件夹容器
+                childrenContainer.appendChild(newFolderItem);
+                
+                // 展开父文件夹
+                const parentArrow = parentFolder.querySelector('.fa-angle-right, .fa-angle-down');
+                if (parentArrow) {
+                    parentArrow.classList.remove('fa-angle-right');
+                    parentArrow.classList.add('fa-angle-down');
+                }
+                
+                const parentFolderIcon = parentFolder.querySelector('.fa-folder');
+                if (parentFolderIcon) {
+                    parentFolderIcon.classList.remove('fa-folder');
+                    parentFolderIcon.classList.add('fa-folder-open');
+                    parentFolderIcon.classList.add('text-primary');
+                }
+                
+                // 显示成功提示
+                let message = '文件夹创建成功：' + folderName;
+                if (requireApproval) {
+                    message += '（需要审批';
+                    if (approver) {
+                        const approverNames = {
+                            'admin': '管理员',
+                            'manager': '部门经理',
+                            'engineer': '工程师'
+                        };
+                        message += '，审核人：' + approverNames[approver];
+                    }
+                    message += '）';
+                }
+                alert(message);
+            }
+            
+            // 重命名文件夹
+            function renameFolder(folderItem, newName) {
+                const folderNameSpan = folderItem.querySelector('span');
+                if (folderNameSpan) {
+                    folderNameSpan.textContent = newName;
+                    // 显示成功提示
+                    alert('文件夹重命名成功：' + newName);
+                }
+            }
+            
+            // 删除文件夹
+            function deleteFolder(folderItem) {
+                const folderName = folderItem.querySelector('span').textContent;
+                if (confirm('确定要删除文件夹 "' + folderName + '" 吗？')) {
+                    folderItem.remove();
+                    // 显示成功提示
+                    alert('文件夹删除成功：' + folderName);
+                }
+            }
+            
+            // 模态框操作
             // 打开上传模态框
             const openUploadModalBtn = document.getElementById('open-upload-modal');
             const uploadModal = document.getElementById('upload-modal');
@@ -1505,8 +2126,82 @@
                 // 显示文件列表
                 uploadFileList.classList.remove('hidden');
                 
+                // 清空现有文件列表
+                const fileListContainer = uploadFileList.querySelector('.space-y-2');
+                if (fileListContainer) {
+                    fileListContainer.innerHTML = '';
+                }
+                
+                // 为每个文件创建列表项
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'flex items-center justify-between p-2 bg-light rounded-md';
+                    
+                    // 获取文件图标
+                    let fileIcon = 'fa-file';
+                    let fileIconColor = 'text-primary';
+                    if (file.name.endsWith('.pdf')) {
+                        fileIcon = 'fa-file-pdf';
+                        fileIconColor = 'text-danger';
+                    } else if (file.name.endsWith('.dwg') || file.name.endsWith('.dxf')) {
+                        fileIcon = 'fa-file-image';
+                        fileIconColor = 'text-success';
+                    } else if (file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.png')) {
+                        fileIcon = 'fa-file-image';
+                        fileIconColor = 'text-warning';
+                    }
+                    
+                    // 格式化文件大小
+                    const fileSize = formatFileSize(file.size);
+                    
+                    fileItem.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fa ${fileIcon} ${fileIconColor} mr-2"></i>
+                            <div>
+                                <p class="text-sm font-medium">${file.name}</p>
+                                <p class="text-xs text-gray-text">${fileSize}</p>
+                            </div>
+                        </div>
+                        <button class="text-gray-text hover:text-danger transition-all-300 file-remove-btn">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    `;
+                    
+                    // 添加到文件列表
+                    if (fileListContainer) {
+                        fileListContainer.appendChild(fileItem);
+                    }
+                }
+                
+                // 添加删除文件按钮事件
+                const removeButtons = document.querySelectorAll('.file-remove-btn');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const fileItem = this.closest('.flex.items-center.justify-between');
+                        if (fileItem) {
+                            fileItem.remove();
+                            
+                            // 如果文件列表为空，隐藏文件列表
+                            const remainingFiles = fileListContainer.querySelectorAll('.flex.items-center.justify-between');
+                            if (remainingFiles.length === 0) {
+                                uploadFileList.classList.add('hidden');
+                            }
+                        }
+                    });
+                });
+                
                 // 移除自动填充图纸名称的功能，让用户手动输入
                 // 因为一次性上传多个文件时，自动取第一个文件名可能不合适
+            }
+            
+            // 格式化文件大小
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
             
             // 开始上传
@@ -1594,7 +2289,6 @@
             // 全局拖拽上传功能
             const leftFolderTree = document.querySelector('.w-64.bg-white');
             const mainContentArea = document.getElementById('main-content-area');
-            const folderTreeItems = document.querySelectorAll('.folder-tree-item');
             
             // 拖拽提示元素
             let dragHintElement = null;
@@ -1809,15 +2503,60 @@
                 folderCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function(e) {
                         e.stopPropagation();
+                        
+                        // 根目录复选框特殊处理
+                        if (this.id === 'root-folder-checkbox') {
+                            if (this.checked) {
+                                // 勾选根目录时，选择所有子文件夹
+                                folderCheckboxes.forEach(cb => {
+                                    if (cb.id !== 'root-folder-checkbox') {
+                                        cb.checked = true;
+                                    }
+                                });
+                            } else {
+                                // 取消勾选根目录时，取消选择所有子文件夹
+                                folderCheckboxes.forEach(cb => {
+                                    if (cb.id !== 'root-folder-checkbox') {
+                                        cb.checked = false;
+                                    }
+                                });
+                            }
+                        } else {
+                            // 选择子文件夹时，更新根目录的状态
+                            updateRootFolderStatus();
+                        }
+                        
                         updateSelectedFolders();
                     });
                 });
             }
             
+            // 更新根目录复选框状态
+            function updateRootFolderStatus() {
+                const rootCheckbox = document.getElementById('root-folder-checkbox');
+                const childCheckboxes = document.querySelectorAll('.folder-checkbox:not(#root-folder-checkbox)');
+                const checkedChildCheckboxes = document.querySelectorAll('.folder-checkbox:not(#root-folder-checkbox):checked');
+                
+                if (checkedChildCheckboxes.length === 0) {
+                    // 没有子文件夹被选择
+                    rootCheckbox.checked = false;
+                    rootCheckbox.indeterminate = false;
+                } else if (checkedChildCheckboxes.length === childCheckboxes.length) {
+                    // 所有子文件夹都被选择
+                    rootCheckbox.checked = true;
+                    rootCheckbox.indeterminate = false;
+                } else {
+                    // 部分子文件夹被选择
+                    rootCheckbox.checked = false;
+                    rootCheckbox.indeterminate = true;
+                }
+            }
+            
             // 更新选中的文件夹
             function updateSelectedFolders() {
                 const checkedCheckboxes = document.querySelectorAll('.folder-checkbox:checked');
-                const selectedFolders = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+                // 排除根目录，只选择子文件夹
+                const selectedFolders = Array.from(checkedCheckboxes).filter(checkbox => checkbox.id !== 'root-folder-checkbox').map(checkbox => checkbox.value);
                 
                 if (selectedFolders.length > 0) {
                     if (selectedFolders.length === 1) {
@@ -1896,7 +2635,6 @@
             // 编辑模态框
             const editModal = document.getElementById('edit-modal');
             const closeEditModal = document.getElementById('close-edit-modal');
-            const cancelEditBtn = document.getElementById('cancel-edit-btn');
             
             if (closeEditModal) {
                 closeEditModal.addEventListener('click', function() {
@@ -2057,6 +2795,52 @@
                 });
             }
             
+            // 上传文件和上传文件夹按钮交互
+            const uploadFileBtn = document.getElementById('upload-file-btn');
+            const uploadFolderBtn = document.getElementById('upload-folder-btn');
+            const fileInput = document.getElementById('file-input');
+            const folderInput = document.getElementById('folder-input');
+            
+            // 上传文件按钮点击事件
+            if (uploadFileBtn) {
+                uploadFileBtn.addEventListener('click', function() {
+                    fileInput.click();
+                });
+            }
+            
+            // 上传文件夹按钮点击事件
+            if (uploadFolderBtn) {
+                uploadFolderBtn.addEventListener('click', function() {
+                    folderInput.click();
+                });
+            }
+            
+            // 文件选择事件
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        // 显示上传模态框
+                        uploadModal.classList.remove('hidden');
+                        
+                        // 处理选择的文件
+                        handleFiles(this.files);
+                    }
+                });
+            }
+            
+            // 文件夹选择事件
+            if (folderInput) {
+                folderInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        // 显示上传模态框
+                        uploadModal.classList.remove('hidden');
+                        
+                        // 处理选择的文件夹
+                        handleFiles(this.files);
+                    }
+                });
+            }
+            
             // 筛选条件中的文件夹多选功能
             const filterFolderSearch = document.getElementById('filter-folder-search');
             const filterFolderDropdown = document.getElementById('filter-folder-dropdown');
@@ -2074,7 +2858,7 @@
             
             // 点击页面其他地方，关闭下拉框
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('#filter-folder-search') && !e.target.closest('#filter-folder-dropdown')) {
+                if (filterFolderDropdown && !e.target.closest('#filter-folder-search') && !e.target.closest('#filter-folder-dropdown')) {
                     filterFolderDropdown.classList.add('hidden');
                 }
             });
@@ -2112,15 +2896,96 @@
                 filterFolderCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', function(e) {
                         e.stopPropagation();
+                        
+                        // 全部选项特殊处理
+                        if (this.id === 'filter-all-checkbox') {
+                            if (this.checked) {
+                                // 勾选全部时，选择所有文件夹
+                                filterFolderCheckboxes.forEach(cb => {
+                                    cb.checked = true;
+                                });
+                            } else {
+                                // 取消勾选全部时，取消选择所有文件夹
+                                filterFolderCheckboxes.forEach(cb => {
+                                    cb.checked = false;
+                                });
+                            }
+                        } 
+                        // 根目录复选框特殊处理
+                        else if (this.id === 'filter-root-checkbox') {
+                            if (this.checked) {
+                                // 勾选根目录时，选择所有子文件夹
+                                filterFolderCheckboxes.forEach(cb => {
+                                    if (cb.id !== 'filter-root-checkbox' && cb.id !== 'filter-all-checkbox') {
+                                        cb.checked = true;
+                                    }
+                                });
+                            } else {
+                                // 取消勾选根目录时，取消选择所有子文件夹
+                                filterFolderCheckboxes.forEach(cb => {
+                                    if (cb.id !== 'filter-root-checkbox' && cb.id !== 'filter-all-checkbox') {
+                                        cb.checked = false;
+                                    }
+                                });
+                            }
+                        } else {
+                            // 选择子文件夹时，更新根目录和全部的状态
+                            updateFilterRootFolderStatus();
+                            updateFilterAllStatus();
+                        }
+                        
                         updateSelectedFilterFolders();
                     });
                 });
             }
             
+            // 更新筛选条件中根目录复选框状态
+            function updateFilterRootFolderStatus() {
+                const rootCheckbox = document.getElementById('filter-root-checkbox');
+                const childCheckboxes = document.querySelectorAll('.filter-folder-checkbox:not(#filter-root-checkbox):not(#filter-all-checkbox)');
+                const checkedChildCheckboxes = document.querySelectorAll('.filter-folder-checkbox:not(#filter-root-checkbox):not(#filter-all-checkbox):checked');
+                
+                if (checkedChildCheckboxes.length === 0) {
+                    // 没有子文件夹被选择
+                    rootCheckbox.checked = false;
+                    rootCheckbox.indeterminate = false;
+                } else if (checkedChildCheckboxes.length === childCheckboxes.length) {
+                    // 所有子文件夹都被选择
+                    rootCheckbox.checked = true;
+                    rootCheckbox.indeterminate = false;
+                } else {
+                    // 部分子文件夹被选择
+                    rootCheckbox.checked = false;
+                    rootCheckbox.indeterminate = true;
+                }
+            }
+            
+            // 更新筛选条件中全部复选框状态
+            function updateFilterAllStatus() {
+                const allCheckbox = document.getElementById('filter-all-checkbox');
+                const allCheckboxes = document.querySelectorAll('.filter-folder-checkbox:not(#filter-all-checkbox)');
+                const checkedAllCheckboxes = document.querySelectorAll('.filter-folder-checkbox:not(#filter-all-checkbox):checked');
+                
+                if (checkedAllCheckboxes.length === 0) {
+                    // 没有文件夹被选择
+                    allCheckbox.checked = false;
+                    allCheckbox.indeterminate = false;
+                } else if (checkedAllCheckboxes.length === allCheckboxes.length) {
+                    // 所有文件夹都被选择
+                    allCheckbox.checked = true;
+                    allCheckbox.indeterminate = false;
+                } else {
+                    // 部分文件夹被选择
+                    allCheckbox.checked = false;
+                    allCheckbox.indeterminate = true;
+                }
+            }
+            
             // 更新选中的筛选文件夹
             function updateSelectedFilterFolders() {
                 const checkedCheckboxes = document.querySelectorAll('.filter-folder-checkbox:checked');
-                const selectedFolders = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+                // 排除根目录，只选择子文件夹和全部选项
+                const selectedFolders = Array.from(checkedCheckboxes).filter(checkbox => checkbox.id !== 'filter-root-checkbox').map(checkbox => checkbox.value);
                 
                 if (selectedFolders.length > 0) {
                     if (selectedFolders.length === 1) {
@@ -2138,6 +3003,130 @@
                 }
             }
         });
+    
+        // 权限设置交互
+        (function() {
+            // 1. 标签切换逻辑
+            const roleTab = document.getElementById('role-tab');
+            const userTab = document.getElementById('user-tab');
+            const roleSelector = document.getElementById('role-selector');
+            const userSelector = document.getElementById('user-selector');
+            
+            if (roleTab && userTab && roleSelector && userSelector) {
+                roleTab.addEventListener('click', function() {
+                    roleTab.classList.add('bg-primary', 'text-white');
+                    roleTab.classList.remove('bg-white', 'text-gray-text');
+                    userTab.classList.add('bg-white', 'text-gray-text');
+                    userTab.classList.remove('bg-primary', 'text-white');
+                    roleSelector.classList.remove('hidden');
+                    userSelector.classList.add('hidden');
+                });
+                
+                userTab.addEventListener('click', function() {
+                    userTab.classList.add('bg-primary', 'text-white');
+                    userTab.classList.remove('bg-white', 'text-gray-text');
+                    roleTab.classList.add('bg-white', 'text-gray-text');
+                    roleTab.classList.remove('bg-primary', 'text-white');
+                    userSelector.classList.remove('hidden');
+                    roleSelector.classList.add('hidden');
+                });
+            }
+            
+            // 2. 用户搜索和选择逻辑
+            const userSearch = document.getElementById('user-search');
+            const userDropdown = document.getElementById('user-dropdown');
+            const userCheckboxes = document.querySelectorAll('.user-checkbox');
+            const selectedUsers = document.getElementById('selected-users');
+            
+            if (userSearch && userDropdown) {
+                userSearch.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+                
+                // 点击页面其他地方关闭用户下拉框
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('#user-search') && !e.target.closest('#user-dropdown')) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+                
+                // 用户选择逻辑
+                if (userCheckboxes.length > 0) {
+                    userCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', function() {
+                            const userName = this.nextElementSibling.textContent;
+                            const userId = this.value;
+                            
+                            if (this.checked) {
+                                // 添加已选用户标签
+                                const userTag = document.createElement('div');
+                                userTag.className = 'bg-gray-bg px-2 py-1 rounded-full text-xs flex items-center';
+                                userTag.dataset.userId = userId;
+                                userTag.innerHTML = `
+                                    <span>${userName}</span>
+                                    <button type="button" class="ml-1 text-gray-text hover:text-danger">×</button>
+                                `;
+                                selectedUsers.appendChild(userTag);
+                                
+                                // 绑定删除标签事件
+                                userTag.querySelector('button').addEventListener('click', function() {
+                                    userTag.remove();
+                                    // 取消对应的复选框
+                                    document.querySelector(`.user-checkbox[value="${userId}"]`).checked = false;
+                                });
+                            } else {
+                                // 移除已选用户标签
+                                const existingTag = selectedUsers.querySelector(`[data-user-id="${userId}"]`);
+                                if (existingTag) {
+                                    existingTag.remove();
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+            
+            // 3. 保存权限设置逻辑
+            const saveButton = document.getElementById('confirm-new-folder-btn');
+            
+            if (saveButton) {
+                saveButton.addEventListener('click', function() {
+                    // 收集权限设置数据
+                    const permissions = {
+                        roles: {},
+                        users: {}
+                    };
+                    
+                    // 收集选中的权限
+                    const selectedPermissions = {};
+                    
+                    permissionCheckboxes.forEach(checkbox => {
+                        const permission = checkbox.dataset.permission;
+                        selectedPermissions[permission] = checkbox.checked;
+                    });
+                    
+                    // 收集角色权限
+                    if (!roleSelector.classList.contains('hidden')) {
+                        const selectedRole = document.getElementById('role-dropdown').value;
+                        permissions.roles[selectedRole] = selectedPermissions;
+                    }
+                    
+                    // 收集用户权限
+                    if (!userSelector.classList.contains('hidden')) {
+                        const selectedUserTags = selectedUsers.querySelectorAll('[data-user-id]');
+                        
+                        selectedUserTags.forEach(tag => {
+                            const userId = tag.dataset.userId;
+                            permissions.users[userId] = selectedPermissions;
+                        });
+                    }
+                    
+                    // 这里可以将permissions数据发送到后端存储
+                    console.log('简化后的权限设置数据:', permissions);
+                });
+            }
+        })();
     </script>
 </body>
 </html>

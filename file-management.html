@@ -192,10 +192,6 @@
                                 <input type="text" placeholder="请输入文件夹名称" class="w-full border border-gray-border rounded-md px-3 py-2 focus:border-primary focus:outline-none">
                             </div>
                             <div class="md:col-span-2">
-                                <div class="flex items-center mb-3">
-                                    <input id="is-bottom" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
-                                    <label for="is-bottom" class="ml-2 block text-sm text-gray-text">是否底层文件夹(如果是底层，则可上传图纸，且不能在此层级下再创建文件夹)</label>
-                                </div>
                                 <div class="flex items-center">
                                     <input id="need-approval" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-border rounded">
                                     <label for="need-approval" class="ml-2 block text-sm text-gray-text">上传至此文件夹的图纸需要审批</label>
@@ -249,31 +245,9 @@
                 });
             });
 
-            // 底层文件夹逻辑
-            const isBottomCheckbox = document.getElementById('is-bottom');
+            // 按钮元素获取
             const createFolderBtn = document.getElementById('create-folder-btn');
             const saveBtn = document.getElementById('save-btn');
-
-            if (isBottomCheckbox && createFolderBtn) {
-                // 初始状态
-                updateButtonStates();
-
-                // 监听复选框变化
-                isBottomCheckbox.addEventListener('change', updateButtonStates);
-
-                // 更新按钮状态函数
-                function updateButtonStates() {
-                    if (isBottomCheckbox.checked) {
-                        // 是底层文件夹：禁用创建文件夹按钮
-                        createFolderBtn.disabled = true;
-                        createFolderBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                    } else {
-                        // 不是底层文件夹：启用创建文件夹按钮
-                        createFolderBtn.disabled = false;
-                        createFolderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    }
-                }
-            }
 
             // 创建文件夹按钮点击事件
             if (createFolderBtn) {
